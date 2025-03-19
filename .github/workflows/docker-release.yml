@@ -1,0 +1,39 @@
+name: Create Release
+
+on:
+  push:
+    branches: [main, test]
+    # Publish semver tags as releases
+    tags: ["v*.*.*", "v*.*.*.*"]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate release tag
+        id: generate_release_tag
+        uses: amitsingh-007/next-release-tag@v5.1.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag_prefix: "v"
+          tag_template: "yyyy.mm.dd.i"
+
+      - name: Extract Git Commit Hash
+        id: git_commit_hash
+        run: echo "commit_hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.generate_release_tag.outputs.next_release_tag }}
+          release_name: Release ${{ steps.generate_release_tag.outputs.next_release_tag }}
+          body: |
+            Release ${{ steps.generate_release_tag.outputs.next_release_tag }}
+            Commit: ${{ steps.git_commit_hash.outputs.commit_hash }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
