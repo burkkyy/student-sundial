@@ -8,7 +8,7 @@
         <SimpleCard
           v-if="isSystemAdmin"
           color="secondary"
-          to="/administration/tenants"
+          to="/administration"
           title="Admin only Card"
         />
       </v-col>

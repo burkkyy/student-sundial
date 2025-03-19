@@ -11,7 +11,7 @@
         <div class="logo">
           <RouterLink to="/">
             <img
-              src="@/assets/logo.png"
+              src="@/assets/logo.webp"
               alt="logo"
               class="mt-1"
               style="height: 40px"

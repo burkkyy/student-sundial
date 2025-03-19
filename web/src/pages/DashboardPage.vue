@@ -44,6 +44,7 @@
       </SimpleCard>
     </v-col>
   </v-row>
+  {{ currentUser }}
 </template>
 
 <script setup lang="ts">
@@ -53,6 +54,9 @@ import SimpleCard from "@/components/common/SimpleCard.vue"
 import TabCard from "@/components/common/TabCard.vue"
 
 import useBreadcrumbs from "@/use/use-breadcrumbs"
+import useCurrentUser from "@/use/use-current-user"
+
+const { currentUser } = useCurrentUser()
 
 useBreadcrumbs("Dashboard", [])
 
