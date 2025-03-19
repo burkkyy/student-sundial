@@ -24,7 +24,7 @@
             >
               <div class="d-none d-sm-block">
                 <img
-                  src="/Logo.png"
+                  src="/logo.webp"
                   alt="Logo"
                   style="width: 300px"
                   class="d-md-block pl-6"
@@ -46,7 +46,7 @@
                   class="pa-5 d-md-none"
                 >
                   <img
-                    src="/Logo.png"
+                    src="/logo.webp"
                     alt="Logo"
                     style="width: 300px"
                     class="d-md-inline"
