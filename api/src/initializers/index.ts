@@ -7,33 +7,29 @@ const NON_INITIALIZER_REGEX = /^index\.(ts|js)$/
 export async function importAndExecuteInitializers() {
   const files = await fs.readdir(__dirname)
 
-  for (const file of files) {
-    if (NON_INITIALIZER_REGEX.test(file)) continue
+  return files.reduce(async (previousInitializerAction, file) => {
+    await previousInitializerAction
+
+    if (NON_INITIALIZER_REGEX.test(file)) return
 
     const modulePath = path.join(__dirname, file)
     logger.info(`Running initializer: ${modulePath}`)
 
-    try {
-      const { default: initializerAction } = await require(modulePath)
-      await initializerAction()
-    } catch (error) {
-      logger.error(`Failed to run initializer: ${modulePath}`, { error })
-      throw error
-    }
-  }
+    const { default: initializerAction } = await require(modulePath)
 
-  return true
+    return initializerAction().catch((error: unknown) => {
+      logger.error(`Initialization error in ${modulePath}:`, error)
+      return Promise.reject(error)
+    })
+  }, Promise.resolve())
 }
 
 if (require.main === module) {
   // TODO: add some kind of middleware that 503s? if initialization failed?
-  ;(async () => {
-    try {
-      await importAndExecuteInitializers()
-    } catch {
-      logger.error("Failed to complete initialization!")
-    }
-
-    process.exit(0)
-  })()
+  importAndExecuteInitializers()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      logger.warn("Failed to complete initialization! Error: " + error)
+      return process.exit(0)
+    })
 }

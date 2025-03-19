@@ -1,4 +1,5 @@
 import axios from "axios"
+import { isNil } from "lodash"
 
 import { AUTH0_DOMAIN } from "@/config"
 
@@ -11,7 +12,6 @@ export interface Auth0UserInfo {
   firstName: string
   lastName: string
   auth0Subject: string
-  externalDirectoryIdentifier: string
 }
 
 export interface Auth0Response {
@@ -24,11 +24,10 @@ export interface Auth0Response {
   updated_at: string // "2023-10-30T17:25:52.975Z"
   email: string // "janedoe@gmail.com"
   email_verified: boolean // true
-  oid?: string // 11111111-2222-3333-4444-555555555555"
 }
 
 export class Auth0PayloadError extends Error {
-  constructor(data: unknown) {
+  constructor(data: any) {
     super(`Payload from Auth0 is strange or failed for: ${JSON.stringify(data)}`)
     this.name = "Auth0PayloadError"
   }
@@ -39,23 +38,20 @@ export const auth0Integration = {
     const { data }: { data: Auth0Response } = await auth0Api.get("/userinfo", {
       headers: { authorization: token },
     })
-
+    // TODO: write a type for the auth0 response and assert that the payload conforms to it
+    if (isNil(data.sub)) {
+      // TODO: this might not even be possible?
+      throw new Auth0PayloadError(data)
+    }
     const firstName = data.given_name || "UNKNOWN"
     const lastName = data.family_name || "UNKNOWN"
     const fallbackEmail = `${firstName}.${lastName}@yukon-no-email.ca`
-    const email = data.email || fallbackEmail
-
-    // for external (non AzureAD) users, the oid is not in the userinfo response
-    // this ensures that something makes it into that field to stop the app from constantly checking
-    // alternatively, if they aren't in the directory, maybe this should fail...
-    const externalDirectoryIdentifier = data.oid || `NOT_IN_DIRECTORY-${email}`
 
     return {
       auth0Subject: data.sub,
-      email,
+      email: data.email || fallbackEmail,
       firstName,
       lastName,
-      externalDirectoryIdentifier,
     }
   },
 }

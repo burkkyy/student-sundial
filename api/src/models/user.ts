@@ -3,33 +3,20 @@ import {
   DataTypes,
   InferAttributes,
   InferCreationAttributes,
-  type NonAttribute,
-  sql,
+  NonAttribute,
 } from "@sequelize/core"
 import {
   Attribute,
   AutoIncrement,
-  Default,
   HasMany,
-  Index,
   NotNull,
   PrimaryKey,
-  ValidateAttribute,
 } from "@sequelize/core/decorators-legacy"
-import { isNil } from "lodash"
 
 import BaseModel from "@/models/base-model"
-import UserPermission from "./user-permission"
-
-/** Keep in sync with web/src/api/users-api.ts */
-export enum UserRoles {
-  SYSTEM_ADMIN = "system_admin",
-  USER = "user",
-}
+import UserRole, { RoleTypes } from "@/models/user-role"
 
 export class User extends BaseModel<InferAttributes<User>, InferCreationAttributes<User>> {
-  static readonly Roles = UserRoles
-
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
   @AutoIncrement
@@ -37,112 +24,60 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
 
   @Attribute(DataTypes.STRING(100))
   @NotNull
-  @Index({ unique: true })
   declare email: string
 
   @Attribute(DataTypes.STRING(100))
   @NotNull
-  @Index({ unique: true })
-  declare auth0Subject: string
+  declare authSubject: string
 
   @Attribute(DataTypes.STRING(100))
-  @NotNull
-  declare firstName: string
+  declare firstName: string | null
 
   @Attribute(DataTypes.STRING(100))
-  @NotNull
-  declare lastName: string
+  declare lastName: string | null
 
   @Attribute(DataTypes.STRING(200))
-  @NotNull
-  declare displayName: string
-
-  @Attribute({
-    type: DataTypes.STRING(255),
-    get() {
-      const roles = this.getDataValue("roles")
-      if (isNil(roles)) {
-        return []
-      }
-      return roles.split(",")
-    },
-    set(value: string[]) {
-      this.setDataValue("roles", value.join(","))
-    },
-  })
-  @NotNull
-  @ValidateAttribute({
-    isIn: {
-      args: [Object.values(UserRoles)],
-      msg: `Role must be one of ${Object.values(UserRoles).join(", ")}`,
-    },
-  })
-  declare roles: string[]
+  declare displayName: string | null
 
   @Attribute(DataTypes.STRING(100))
   declare title: string | null
 
-  @Attribute(DataTypes.STRING(100))
-  declare department: string | null
-
-  @Attribute(DataTypes.STRING(100))
-  declare division: string | null
-
-  @Attribute(DataTypes.STRING(100))
-  declare branch: string | null
-
-  @Attribute(DataTypes.STRING(100))
-  declare unit: string | null
-
-  @Attribute(DataTypes.DATE(0))
-  declare deactivatedAt: Date | null
-
   @Attribute(DataTypes.DATE(0))
   @NotNull
-  @Default(sql.fn("getutcdate"))
   declare createdAt: CreationOptional<Date>
 
   @Attribute(DataTypes.DATE(0))
   @NotNull
-  @Default(sql.fn("getutcdate"))
   declare updatedAt: CreationOptional<Date>
 
   @Attribute(DataTypes.DATE(0))
   declare deletedAt: Date | null
 
-  // Magic Attributes
-  get isSystemAdmin(): NonAttribute<boolean | undefined> {
-    return this.roles?.some((role) => role === UserRoles.SYSTEM_ADMIN)
-  }
-
-  get categories(): NonAttribute<number[]> {
-    if (this.userPermissions) {
-      return this.userPermissions
-        ?.map((permission) => permission.categoryId)
-        .filter((categoryId) => !isNil(categoryId))
-    }
-    return []
-  }
-
-  get sources(): NonAttribute<number[]> {
-    if (this.userPermissions) {
-      return this.userPermissions
-        ?.map((permission) => permission.sourceId)
-        .filter((sourceId) => !isNil(sourceId))
-    }
-    return []
-  }
-
   // Associations
-  @HasMany(() => UserPermission, {
+  @HasMany(() => UserRole, {
     foreignKey: "userId",
     inverse: {
-      as: "user",
+      as: "User",
     },
   })
-  declare userPermissions?: NonAttribute<UserPermission[]>
+  declare roles?: NonAttribute<UserRole[]>
 
-  // Scopes
+  get roleTypes(): NonAttribute<RoleTypes[]> {
+    return this.roles?.map(({ role }) => role) || []
+  }
+
+  get isSystemAdmin(): NonAttribute<boolean> {
+    return this.roleTypes.includes(RoleTypes.SYSTEM_ADMIN)
+  }
+
+  get isProfessor(): NonAttribute<boolean> {
+    return this.roleTypes.includes(RoleTypes.PROFESSOR)
+  }
+
+  get isStudent(): NonAttribute<boolean> {
+    return this.roleTypes.includes(RoleTypes.STUDENT)
+  }
+
   static establishScopes(): void {
     this.addSearchScope(["firstName", "lastName", "displayName"])
   }

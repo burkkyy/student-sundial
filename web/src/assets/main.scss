@@ -1,0 +1,88 @@
+@use "vuetify" with (
+  $utilities: "true",
+  $color-pack: false,
+  $body-font-family: "Nunito Sans",
+  $heading-font-family: "Nunito Sans"
+);
+
+.main-sidebar .v-list-item {
+  border-left: 5px #00000000 solid;
+  padding-left: 11px !important;
+}
+.main-sidebar .v-list-item--active {
+  border-left: 5px #000000 solid !important;
+}
+
+.v-card-subtitle {
+  font-weight: bold !important;
+}
+
+.text-gray {
+  color: #242424;
+  font-weight: 400;
+}
+
+a:not(.v-list-item) {
+  color: #005f73;
+}
+
+.v-breadcrumbs-item {
+  font-weight: bold;
+}
+.v-breadcrumbs-item.v-breadcrumbs-item--disabled {
+  opacity: 1 !important;
+  font-weight: 400;
+}
+.v-breadcrumbs-item.v-breadcrumbs-item--disabled a {
+  color: #000000aa !important;
+}
+li.v-breadcrumbs-divider {
+  padding: 0 2px;
+}
+
+.v-card.simple-card {
+  border: 1px solid #82806646;
+}
+.v-card.issue-card-high {
+  background-color: #fce4d9;
+  color: #bb3e03 !important;
+}
+.v-card.issue-card-medium {
+  background-color: #fdf0e2 !important;
+  color: #ac5702 !important;
+}
+.v-card.issue-card-low {
+  background-color: #fff5d6 !important;
+  color: #ee9b00 !important;
+}
+
+.add-border {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.v-list.add-border {
+  border: 1px solid #ccc !important;
+  border-radius: 4px;
+  padding: 0 !important;
+}
+.v-list.add-border .v-list-item {
+  border-bottom: 1px solid #ccc;
+}
+.v-list.add-border .v-list-item:last-of-type {
+  border-bottom: none;
+}
+
+.high-priority {
+  background-color: #fce4d9; /* Light red background */
+}
+.medium-priority {
+  background-color: #fdf0e2; /* Light yellow background */
+}
+.low-priority {
+  background-color: #fff5d6; /* Light green background */
+}
+
+.v-btn.v-btn--variant-tonal {
+  border: 1px solid;
+}

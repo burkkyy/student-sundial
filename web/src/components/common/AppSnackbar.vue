@@ -14,15 +14,14 @@
       <v-btn
         :color="constrastingColor"
         variant="text"
+        text="Close"
         @click="close"
-      >
-        Close
-      </v-btn>
+      />
     </template>
   </v-snackbar>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { computed, ref, watch } from "vue"
 
 import { useSnack } from "@/use/use-snack"

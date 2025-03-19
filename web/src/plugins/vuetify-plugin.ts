@@ -4,18 +4,19 @@
  * Framework documentation: https://vuetifyjs.com`
  */
 
-// Styles - Note that order matters here!
-import "@/assets/normalize.css"
+// Styles
 import "@mdi/font/css/materialdesignicons.css"
 import "vuetify/styles"
+import "@/assets/normalize.css"
+import "@/assets/main.scss"
 
-// Composables
+// ComposablesF
 import { createVuetify } from "vuetify"
 import * as components from "vuetify/components"
 import * as directives from "vuetify/directives"
 import * as labsComponents from "vuetify/labs/components"
 
-import darkTheme from "@/theme/DarkTheme"
+import { STUDENT_SUNDIAL_THEME } from "@/theme/LightTheme"
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -23,62 +24,60 @@ export default createVuetify({
     ...components,
     ...labsComponents,
   },
-  directives,
-
   theme: {
-    defaultTheme: "darkTheme",
-    themes: { darkTheme },
+    defaultTheme: "STUDENT_SUNDIAL_THEME",
+    themes: {
+      STUDENT_SUNDIAL_THEME,
+    },
   },
+  directives,
 
   defaults: {
     VCard: {
       rounded: "md",
-      flat: "true",
-      color: "#eee",
+      elevation: 0,
+      border: true,
     },
     VTextField: {
       variant: "outlined",
       density: "comfortable",
       color: "primary",
+      autocomplete: "null",
+      bgColor: "white",
       hideDetails: "auto",
-      bgColor: "#fff",
     },
     VTextarea: {
       variant: "outlined",
       density: "comfortable",
       color: "primary",
+      bgColor: "white",
       hideDetails: "auto",
-      bgColor: "#fff",
     },
     VSelect: {
       variant: "outlined",
       density: "comfortable",
       color: "primary",
       hideDetails: "auto",
-      bgColor: "#fff",
     },
     VAutocomplete: {
       variant: "outlined",
       density: "comfortable",
       color: "primary",
       hideDetails: "auto",
-      bgColor: "#fff",
+    },
+    VFileInput: {
+      variant: "outlined",
+      density: "comfortable",
+      color: "primary",
+      prependIcon: "",
+      appendInnerIcon: "mdi-paperclip",
+      hideDetails: "auto",
     },
     VCombobox: {
       variant: "outlined",
       density: "comfortable",
       color: "primary",
       hideDetails: "auto",
-      bgColor: "#fff",
-    },
-    VFileInput: {
-      variant: "outlined",
-      density: "comfortable",
-      color: "primary",
-      hideDetails: "auto",
-      prependIcon: "",
-      appendInnerIcon: "mdi-paperclip",
-      bgColor: "#fff",
     },
     VListItem: {
       minHeight: "45px",
@@ -86,7 +85,16 @@ export default createVuetify({
     VTooltip: {
       location: "top",
     },
-    VSwitch: { color: "primary", density: "comfortable", hideDetails: "auto" },
-    VBtn: { color: "primary", flat: "true" },
+    VSwitch: {
+      color: "success",
+      baseColor: "primary",
+      density: "comfortable",
+      hideDetails: "auto",
+    },
+    VBtn: {
+      color: "primary",
+      style: "text-transform: uppercase; font-weight: 800",
+      variant: "flat",
+    },
   },
 })

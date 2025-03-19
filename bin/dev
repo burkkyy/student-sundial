@@ -1,16 +1,9 @@
 #!/usr/bin/env ruby
 
-require 'rdoc'
-
-require_relative './github_api'
-
 class DevHelper
   # Support dashes in command names
   COMMAND_TO_METHOD = {
-    "ts-node" => :ts_node,
-    "check-types" => :check_types,
-    "branch-from" => :branch_from,
-    "changes-from" => :changes_from,
+    "ts-node" => :ts_node
   }
   METHOD_TO_COMMAND = COMMAND_TO_METHOD.invert
 
@@ -18,13 +11,11 @@ class DevHelper
   WAIT_FOR_PROCESS = 'wait_for_process'
 
   # External Interface
-
   def self.call(*args)
     new.call(*args)
   end
 
   # Core logic
-
   def call(*args, **kwargs)
     command = args[0]
     method = COMMAND_TO_METHOD.fetch(command, command)
@@ -48,7 +39,6 @@ class DevHelper
   end
 
   # Primary command wrappers
-
   def build(*args, **kwargs)
     compose(%w[build], *args, **kwargs)
   end
@@ -70,9 +60,6 @@ class DevHelper
   end
 
   # Custom helpers
-
-  ##
-  # Start a shell in the api container.
   def sh(*args, **kwargs)
     run(
       *%w[api sh],
@@ -99,10 +86,6 @@ class DevHelper
     run(*%w[api], *args, **kwargs)
   end
 
-  def archiver(*args, **kwargs)
-    run(*%w[archiver], *args, **kwargs)
-  end
-
   def npm(*args, **kwargs)
     run(*%w[api npm], *args, **kwargs)
   end
@@ -111,20 +94,13 @@ class DevHelper
     run(*%w[api npm run ts-node], *args, **kwargs)
   end
 
-  def check_types(*args, **kwargs)
-    run(*%w[api npm run check-types], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs) &&
-      run(*%w[web npm run check-types], *args, **kwargs)
-  end
-
   def test_api(*args, **kwargs)
-    reformat_project_relative_path_filter_for_vitest!(args, 'api/')
     run(*%w[test_api npm run test], *args, **kwargs)
   end
 
   alias test test_api
 
   def test_web(*args, **kwargs)
-    reformat_project_relative_path_filter_for_vitest!(args, 'web/')
     run(*%w[test_web npm run test], *args, **kwargs)
   end
 
@@ -132,7 +108,7 @@ class DevHelper
     if RUBY_PLATFORM =~ /linux/
       run(*%w[api npm run knex], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs)
 
-      file_or_directory = 'api/src/db'
+      file_or_directory = "#{project_root}/api/src/db/migrations"
       exit(0) unless take_over_needed?(file_or_directory)
 
       ownit file_or_directory
@@ -151,13 +127,11 @@ class DevHelper
     knex("seed:#{action}", *args.drop(1), **kwargs)
   end
 
-  ##
-  # Start the sqlcmd utility to interact with the database.
   # -I enable quoted identifiers, e.g. "table"."column"
   def sqlcmd(*args, **kwargs) # rubocop:disable Metrics/MethodLength
     environment_hoist = ENV.slice(*%w[
-      DB_DATABASE
-      DB_USERNAME
+      DB_NAME
+      DB_USER
       DB_HOST
       DB_PORT
     ]).map { |key, value|
@@ -168,12 +142,11 @@ class DevHelper
       <<~BASH,
         exec db sh -c '
           #{environment_hoist}
-          /opt/mssql-tools18/bin/sqlcmd \
-            -U "$DB_USERNAME" \
-            -P "$DB_PASSWORD" \
+          /opt/mssql-tools/bin/sqlcmd \
+            -U "$DB_USER" \
+            -P "$DB_PASS" \
             -H "$DB_HOST" \
-            -d "$DB_DATABASE" \
-            -C \
+            -d "$DB_NAME" \
             -I #{args.join(" ")}
           '
       BASH
@@ -183,22 +156,6 @@ class DevHelper
 
   def db(*args, **kwargs)
     compose(*%w[exec db], *args, **kwargs)
-  end
-
-  ##
-  # Generates and checks out a new branch based on the Jira issue URL.
-  # Example:
-  #   dev branch-from https://github.com/icefoganalytics/internal-data-portal/issues/98
-  #
-  # Produces:
-  #   git checkout -b issue-98/switch-test-suite-from-jest-to-vitest
-  def branch_from(github_issue_url, *args, **kwargs)
-    branch_name = GithubApi.build_branch_name(github_issue_url)
-    system("git checkout -b #{branch_name}")
-  end
-
-  def changes_from(branch_or_ref_or_commit_hash = 'HEAD')
-    system("git --no-pager log origin/main..#{branch_or_ref_or_commit_hash} --patch")
   end
 
   def ownit(*args, **kwargs)
@@ -213,59 +170,16 @@ class DevHelper
     end
   end
 
-  ##
-  # Generate bash completions
   def bash_completions
-    all_public_methods = public_methods(false).sort
-    all_public_methods.delete(:call)
-    completions = all_public_methods.map { |word|
+    completions = public_methods(false).reject { |word|
+      %i[call].include?(word)
+    }.map { |word|
       METHOD_TO_COMMAND.fetch(word, word)
     }
     puts completions
   end
 
-  ##
-  # Generate help documentation.
-  def help(*args, **kwargs)
-    rdoc = RDoc::RDoc.new
-    rdoc_arguements = %w[--dry-run --quiet] + [__FILE__]
-    rdoc.document(rdoc_arguements)
-    rdoc_data_for_class = rdoc.store.classes_hash['DevHelper']
-
-    puts <<~HELP.chomp
-      Development Helper.
-
-      Usage:
-        dev <command> [args]
-
-      Available commands:
-    HELP
-
-    all_public_methods = public_methods(false).sort
-    all_public_methods.delete(:call)
-    longest_command_length = all_public_methods.map(&:length).max
-
-    all_public_methods.each do |method_name|
-      method_doc = rdoc_data_for_class.find_method_named(method_name.to_s)
-      command = METHOD_TO_COMMAND.fetch(method_name, method_name)
-      comment = method_doc.comment
-
-      print "  #{command}"
-      unless comment.empty?
-        first_line_of_comment = comment.to_s.lines[0].strip
-        pad = '-' * (longest_command_length - command.length + 1)
-        print " #{pad} #{first_line_of_comment}"
-      end
-      print "\n"
-    end
-
-    command = compose_command('<args>')
-    puts "\nFallback for unknown commands is to run `#{command}`."
-  end
-
-  #######
   private
-  #######
 
   def container_id(container_name, *args, **kwargs)
     command = compose_command(*%w[ps -q], container_name, *args, **kwargs)
@@ -286,7 +200,6 @@ class DevHelper
 
   def take_over_needed?(file_or_directory)
     files_owned_by_others = system("find #{file_or_directory} -not -user #{user_id} -print -quit | grep -q .")
-    files_owned_by_others
   end
 
   def user_id
@@ -300,40 +213,7 @@ class DevHelper
 
     `id -g`.strip
   end
-
-  def reformat_project_relative_path_filter_for_vitest!(args, prefix)
-    if args.length.positive? && args[0].start_with?(prefix)
-      src_path_prefix = "#{prefix}src/"
-      test_path_regex = Regexp.escape(prefix)
-      src_path_regex = Regexp.escape(src_path_prefix)
-
-      if args[0].start_with?(src_path_prefix)
-        args[0] = args[0].gsub(%r{^#{src_path_regex}}, 'tests/')
-                         .gsub(%r{\.ts$}, '.test.ts')
-                         # TODO: handle other file types
-      else
-        args[0] = args[0].gsub(%r{^#{test_path_regex}}, '')
-      end
-
-      puts "Reformatted path filter from project relative to service relative for vitest."
-    end
-  end
 end
 
 # Only execute main function when file is executed
 DevHelper.call(*ARGV) if $PROGRAM_NAME == __FILE__
-
-## Dev completions
-# https://iridakos.com/programming/2018/03/01/bash-programmable-completion-tutorial
-# _dev_completions () {
-#   local dev_command_path="$(which dev)"
-#   local dev_function_names
-#   dev_function_names="$(ruby "$dev_command_path" bash_completions)"
-#   # COMP_WORDS: an array of all the words typed after the name of the program the compspec belongs to
-#   # COMP_CWORD: an index of the COMP_WORDS array pointing to the word the current cursor is at - in other words, the index of the word the cursor was when the tab key was pressed
-#   # COMP_LINE: the current command line
-#   COMPREPLY=($(compgen -W "$dev_function_names" "${COMP_WORDS[$COMP_CWORD]}"))
-# }
-
-# complete -F _dev_completions dev
-# complete -W "allow" direnv

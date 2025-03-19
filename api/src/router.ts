@@ -1,34 +1,19 @@
 import path from "path"
 import fs from "fs"
 
-import {
-  Router,
-  type Request,
-  type Response,
-  type ErrorRequestHandler,
-  type NextFunction,
-} from "express"
+import { Router, type Request, type Response, ErrorRequestHandler, NextFunction } from "express"
 import { UnauthorizedError } from "express-jwt"
 import { template } from "lodash"
 
 import { APPLICATION_NAME, GIT_COMMIT_HASH, NODE_ENV, RELEASE_TAG } from "@/config"
-import { logger } from "@/utils/logger"
 import migrator from "@/db/migrator"
 
-import { jwtMiddleware, ensureAndAuthorizeCurrentUser } from "@/middlewares"
+import jwtMiddleware from "@/middlewares/jwt-middleware"
+import { ensureAndAuthorizeCurrentUser } from "@/middlewares/authorization-middleware"
 
-import {
-  ArchiveItemAuditsController,
-  ArchiveItemFilesController,
-  ArchiveItemsController,
-  CategoriesController,
-  CurrentUserController,
-  DecisionsController,
-  IntegrationController,
-  RetentionsController,
-  SourcesController,
-  UsersController,
-} from "@/controllers"
+import { CurrentUserController, UsersController } from "@/controllers"
+
+import { logger } from "@/utils/logger"
 
 export const router = Router()
 
@@ -40,63 +25,28 @@ router.route("/_status").get((_req: Request, res: Response) => {
   })
 })
 
+router.use("/api", jwtMiddleware, ensureAndAuthorizeCurrentUser)
 router.use("/migrate", migrator.migrationRouter)
 
-router.route("/api/integrations/:sourceId").post(IntegrationController.create)
+/*
+>>>>>>>>>>
+Add api routes below.
+Most routes are prolly just copy and paste of Users
+*/
 
-// api routes
-router.use("/api", jwtMiddleware, ensureAndAuthorizeCurrentUser)
-
-router.route("/api/current-user").get(CurrentUserController.show)
-
+// Users
+router.route("/api/current-user").get(CurrentUserController.show).put(CurrentUserController.update)
 router.route("/api/users").get(UsersController.index).post(UsersController.create)
 router
-  .route("/api/users/:id")
+  .route("/api/users/:userId")
   .get(UsersController.show)
   .patch(UsersController.update)
   .delete(UsersController.destroy)
 
-router.route("/api/sources").get(SourcesController.index).post(SourcesController.create)
-router
-  .route("/api/sources/:id")
-  .get(SourcesController.show)
-  .patch(SourcesController.update)
-  .delete(SourcesController.destroy)
-
-router.route("/api/retentions").get(RetentionsController.index).post(RetentionsController.create)
-router
-  .route("/api/retentions/:id")
-  .get(RetentionsController.show)
-  .patch(RetentionsController.update)
-  .delete(RetentionsController.destroy)
-
-router.route("/api/categories").get(CategoriesController.index).post(CategoriesController.create)
-
-router
-  .route("/api/categories/:id")
-  .get(CategoriesController.show)
-  .patch(CategoriesController.update)
-  .delete(CategoriesController.destroy)
-
-router
-  .route("/api/archive-items")
-  .get(ArchiveItemsController.index)
-  .post(ArchiveItemsController.create)
-router
-  .route("/api/archive-items/:id")
-  .get(ArchiveItemsController.show)
-  .patch(ArchiveItemsController.update)
-  .delete(ArchiveItemsController.destroy)
-
-router.route("/api/archive-items/:archiveItemId/files/:fileId").get(ArchiveItemFilesController.show)
-router.route("/api/archive-items/:archiveItemId/audits").get(ArchiveItemAuditsController.index)
-
-router.route("/api/decisions").get(DecisionsController.index).post(DecisionsController.create)
-router
-  .route("/api/decisions/:id")
-  .get(DecisionsController.show)
-  .patch(DecisionsController.update)
-  .delete(DecisionsController.destroy)
+/*
+Ignore all code below
+<<<<<<<<<<
+*/
 
 // if no other routes match, return a 404
 router.use("/api", (_req: Request, res: Response) => {

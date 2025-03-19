@@ -51,7 +51,7 @@ export function useUser(id: Ref<number | null | undefined>) {
     try {
       const { user } = await usersApi.update(staticId, state.user)
       state.isErrored = false
-      //state.user = user
+      state.user = user
       return user
     } catch (error) {
       console.error("Failed to save user:", error)

@@ -1,61 +1,55 @@
 import http from "@/api/http-client"
-import { type Policy } from "@/api/base-api"
 
-/** Keep in sync with api/src/models/user.ts */
-export enum UserRoles {
-  SYSTEM_ADMIN = "system_admin",
-  USER = "user",
-}
-
+// Must match User in api/src/models/user.ts
 export type User = {
   id: number
-  email: string
   auth0Subject: string
-  firstName: string
-  lastName: string
-  displayName: string
-  roles: UserRoles[]
+  email: string
+  firstName: string | null
+  lastName: string | null
+  displayName: string | null
   title: string | null
-  department: string | null
-  division: string | null
-  branch: string | null
-  unit: string | null
-  deactivatedAt: string | null
+  isActive: boolean
   createdAt: string
   updatedAt: string
+  deletedAt: string
 
-  // Virtuals
-  isActive: boolean
-  categories?: number[]
-  sources?: number[]
+  // associations
+  roles: Role[] | null
+}
 
-  // Associations
+// Must match roles in api/src/models/roles.ts
+export enum RoleTypes {
+  SYSTEM_ADMIN = "System Admin",
+  USER = "User",
+}
+export const RoleTypesArray = [RoleTypes.SYSTEM_ADMIN, RoleTypes.USER]
+
+export type Role = {
+  id: number
+  userId: User["id"]
+  role: RoleTypes
+  createdAt: Date
+  updatedAt: Date
 }
 
 export type UserWhereOptions = {
-  email?: string
-  title?: string
-  department?: string
-  division?: string
-  branch?: string
-  unit?: string
+  isActive?: boolean
 }
 
-export type UserFiltersOptions = {
-  search?: string | string[]
-  // TODO: implement isActive scope in back-end
+export type UserQueryOptions = {
+  where?: UserWhereOptions
+  page?: number
+  perPage?: number
 }
 
 export const usersApi = {
-  UserRoles,
-  async list(
-    params: {
-      where?: UserWhereOptions
-      filters?: UserFiltersOptions
-      page?: number
-      perPage?: number
-    } = {}
-  ): Promise<{
+  RoleTypes,
+  async fetchCurrentUser(): Promise<{ user: User }> {
+    const { data } = await http.get("/api/current-user")
+    return data
+  },
+  async list(params: UserQueryOptions = {}): Promise<{
     users: User[]
     totalCount: number
   }> {
@@ -64,25 +58,15 @@ export const usersApi = {
     })
     return data
   },
-  async get(userId: number): Promise<{
-    user: User
-    policy: Policy
-  }> {
+  async get(userId: number): Promise<{ user: User }> {
     const { data } = await http.get(`/api/users/${userId}`)
     return data
   },
-  async create(attributes: Partial<User>): Promise<{
-    user: User
-  }> {
+  async create(attributes: Partial<User>): Promise<{ user: User }> {
     const { data } = await http.post("/api/users", attributes)
     return data
   },
-  async update(
-    userId: number,
-    attributes: Partial<User>
-  ): Promise<{
-    user: User
-  }> {
+  async update(userId: number, attributes: Partial<User>): Promise<{ user: User }> {
     const { data } = await http.patch(`/api/users/${userId}`, attributes)
     return data
   },

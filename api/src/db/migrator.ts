@@ -9,6 +9,9 @@ export class Migrator {
   readonly migrationRouter
 
   constructor() {
+    if (NODE_ENV == "production") {
+      logger.warn("Running migration controller in production!!!")
+    }
     this.migrationRouter = express.Router()
 
     this.migrationRouter.get("/", async (_req: Request, res: Response) => {
@@ -33,9 +36,9 @@ export class Migrator {
       return res.json({ data: await this.listMigrations() })
     })
 
-    this.migrationRouter.get("/seed/:environment?", async (req: Request, res: Response) => {
+    this.migrationRouter.get("/seed", async (_req: Request, res: Response) => {
       try {
-        await this.seedUp(req.params.environment)
+        await this.seedUp()
       } catch (err) {
         logger.error(err)
       }
@@ -62,9 +65,9 @@ export class Migrator {
     return dbMigrationClient.migrate.latest({ directory: join(__dirname, "migrations") })
   }
 
-  async seedUp(environment?: string) {
+  async seedUp() {
     logger.warn("-------- SEED UP ---------")
-    return dbMigrationClient.seed.run({ directory: join(__dirname, "seeds", environment || NODE_ENV) })
+    return dbMigrationClient.seed.run({ directory: join(__dirname, "seeds", NODE_ENV) })
   }
 }
 const migrator = new Migrator()

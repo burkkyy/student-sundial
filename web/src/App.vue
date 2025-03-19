@@ -1,9 +1,6 @@
 <template>
   <v-app>
     <router-view v-if="isUnauthenticatedRoute"></router-view>
-    <!--
-      NOTE: current user will always be defined when the authenticated router view loads.
-    -->
     <router-view v-else-if="isReady || isErrored" />
     <PageLoader
       v-else-if="isReadyAuth0 && isLoadingCurrentUser"
@@ -21,7 +18,7 @@
   </v-app>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { computed, ref, watch } from "vue"
 import { useAuth0 } from "@auth0/auth0-vue"
 import { useRoute, useRouter } from "vue-router"
@@ -47,7 +44,6 @@ const router = useRouter()
 watch(
   () => isReadyAuth0.value,
   async (newIsReadyAuth0) => {
-    // Don't bother attempting to load current user for unathenticated routes
     if (isUnauthenticatedRoute.value) return
 
     if (newIsReadyAuth0 === true) {
@@ -57,7 +53,7 @@ watch(
         console.log("Failed to load current user:", error)
         isErrored.value = true
         await router.isReady()
-        await router.push({ name: "SignInPage" })
+        await router.push({ name: "UnauthorizedPage" })
       }
     }
   },

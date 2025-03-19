@@ -15,7 +15,11 @@ router.beforeEach(async (to) => {
   if (to.meta.requiresAuth === false) return true
 
   const isAuthenticated = await authGuard(to)
-  if (isAuthenticated) return true
+  if (isAuthenticated) {
+    console.log("TRUE")
+    return true
+  }
+  console.log("FALSE")
 
   return false
 })
