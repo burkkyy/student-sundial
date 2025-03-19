@@ -1,14 +1,15 @@
-name: Create Release
+name: Build and Push
 
 on:
   push:
     branches: [main, test]
-    # Publish semver tags as releases
+    # Publish semver tags as releases.
     tags: ["v*.*.*", "v*.*.*.*"]
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,15 +26,16 @@ jobs:
         id: git_commit_hash
         run: echo "commit_hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
-      - name: Create release
-        uses: actions/create-release@v1
+      - name: Build and push web Docker image
+        uses: docker/build-push-action@v5.3.0
         with:
-          tag_name: ${{ steps.generate_release_tag.outputs.next_release_tag }}
-          release_name: Release ${{ steps.generate_release_tag.outputs.next_release_tag }}
-          body: |
-            Release ${{ steps.generate_release_tag.outputs.next_release_tag }}
-            Commit: ${{ steps.git_commit_hash.outputs.commit_hash }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          context: .
+          push: false
+          build-args: |
+            RELEASE_TAG=${{ steps.generate_release_tag.outputs.next_release_tag }}
+            GIT_COMMIT_HASH=${{ steps.git_commit_hash.outputs.commit_hash }}
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.generate_release_tag.outputs.next_release_tag }}
