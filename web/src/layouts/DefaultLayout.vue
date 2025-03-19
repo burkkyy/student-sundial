@@ -1,120 +1,98 @@
 <template>
-  <LeftSidebarNavigationDrawer
-    v-model="showDrawer"
-    :show-rail="showRail"
-  />
+  <v-app>
+    <v-app-bar
+      height="64"
+      class="horizontal-header"
+      color="header-bar-color"
+      elevation="0"
+    >
+      <!---Logo part -->
+      <div class="v-toolbar__content px-6">
+        <div class="logo">
+          <RouterLink to="/">
+            <img
+              src="@/assets/logo.png"
+              alt="logo"
+              class="mt-1"
+              style="height: 40px"
+          /></RouterLink>
+        </div>
 
-  <v-app-bar
-    flat
-    color="#434343"
-  >
-    <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
-    <v-app-bar-title
-      v-if="mdAndUp"
-      class="ml-2 text-weight-bold"
-      style="font-weight: bold"
-      >{{ title }}</v-app-bar-title
-    >
-    <v-app-bar-title
-      v-if="!mdAndUp"
-      class="ml-2 text-weight-bold"
-      style="font-weight: bold"
-    >
-      <router-link
-        :to="{ name: 'DashboardPage' }"
-        style="color: white; text-decoration: none"
-        >The Vault</router-link
+        <v-spacer />
+        <v-menu
+          bottom
+          offset-y
+          transition="scale-transition"
+        >
+          <template #activator="{ props }">
+            <v-btn
+              color="white"
+              variant="tonal"
+              icon
+              v-bind="props"
+              class="mr-1"
+              style="border: none"
+            >
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+
+          <v-list class="">
+            <v-list-item>
+              <template #prepend>
+                <v-icon color="header-bar-color">mdi-account</v-icon>
+              </template>
+              <v-list-item-title class="">{{ currentUser.displayName }}</v-list-item-title>
+            </v-list-item>
+            <v-divider />
+            <v-list-item
+              v-if="isSystemAdmin"
+              to="/administration"
+            >
+              <template #prepend>
+                <v-icon color="header-bar-color">mdi-cog</v-icon>
+              </template>
+              <v-list-item-title class="text-right"> Administration </v-list-item-title>
+            </v-list-item>
+
+            <v-list-item
+              class="text-right"
+              @click="logoutWrapper"
+            >
+              <template #prepend> <v-icon color="header-bar-color">mdi-exit-run</v-icon> </template
+              >Sign out</v-list-item
+            >
+          </v-list>
+        </v-menu>
+      </div>
+    </v-app-bar>
+
+    <v-main>
+      <AppBreadcrumbs />
+      <v-container
+        fluid
+        class="page-wrapper pb-sm-15 pb-10"
       >
-    </v-app-bar-title>
-
-    <div
-      :style="{ width: `${searchWidth}px` }"
-      class="d-none"
-    >
-      <v-text-field
-        v-model="searchValue"
-        variant="outlined"
-        label="Search"
-        hide-details
-        density="compact"
-        class="ml-2"
-        bg-color="#545454"
-        @update:focused="updateSearchFocus"
-      ></v-text-field>
-    </div>
-    <v-spacer />
-
-    <v-btn
-      class="mr-2"
-      icon="mdi-archive-plus"
-      :to="{ name: 'archive-item/ArchiveItemNewPage' }"
-    />
-    <v-btn
-      class="mr-4"
-      icon="mdi-call-split"
-      :to="{ name: 'decisions/DecisionNewPage' }"
-    />
-
-    <KebabMenu />
-  </v-app-bar>
-
-  <v-main>
-    <SimpleBreadcrumbs />
-
-    <v-container fluid>
-      <router-view />
-    </v-container>
-  </v-main>
+        <RouterView />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup lang="ts">
-import { ref, unref, watch } from "vue"
-import { useDisplay } from "vuetify"
+import { RouterView, useRouter } from "vue-router"
 
-import SimpleBreadcrumbs from "@/components/common/SimpleBreadcrumbs.vue"
-import KebabMenu from "@/components/default-layout/KebabMenu.vue"
-import LeftSidebarNavigationDrawer from "@/components/default-layout/LeftSidebarNavigationDrawer.vue"
-import useBreadcrumbs from "@/use/use-breadcrumbs"
+import useCurrentUser from "@/use/use-current-user"
 
-const { mdAndUp } = useDisplay()
+import AppBreadcrumbs from "@/components/AppBreadcrumbs.vue"
 
-const showDrawer = ref(mdAndUp.value)
-const showRail = ref(!mdAndUp.value)
-const searchWidth = ref(120)
-const searchValue = ref("")
+const { currentUser, isSystemAdmin } = useCurrentUser<true>()
 
-const { title } = useBreadcrumbs()
+const router = useRouter()
 
-watch(
-  () => unref(mdAndUp),
-  (newVal) => {
-    console.log("NM", newVal)
-    //!mobile || (mobile && showDrawer)
-    if (!newVal) {
-      showDrawer.value = true
-      showRail.value = false
-    } else {
-      showDrawer.value = false
-      showRail.value = true
-    }
-  }
-)
-
-function toggleDrawer() {
-  console.log(mdAndUp.value)
-
-  if (!mdAndUp.value) showDrawer.value = !showDrawer.value
-  else {
-    showRail.value = !showRail.value
-  }
-}
-
-function updateSearchFocus(hasFocus: boolean) {
-  if (hasFocus) {
-    searchWidth.value = 300
-  } else {
-    searchWidth.value = 120
-    searchValue.value = ""
-  }
+async function logoutWrapper() {
+  router.push({
+    name: "DashboardPage",
+  })
 }
 </script>

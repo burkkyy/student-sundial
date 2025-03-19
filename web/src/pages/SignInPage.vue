@@ -1,82 +1,84 @@
 <template>
-  <div class="fill-height">
+  <v-container
+    tag="section"
+    class="mt-10"
+  >
     <v-row
-      class="h-100vh mh-100 auth my-0"
-      :class="{ 'fill-height': !mdAndDown }"
+      justify="center"
+      class="mt-10"
     >
       <v-col
-        cols="12"
-        lg="8"
-        xl="9"
-        class="d-lg-flex align-center justify-center"
-        style="overflow: hidden"
+        lg="11"
+        sm="8"
+        xl="7"
       >
-        <v-icon
-          class="d-none d-lg-flex"
-          color="primary"
-          size="400"
-          style="opacity: 0.05"
-          >mdi-shield-key</v-icon
+        <v-card
+          class="elevation-5"
+          style="overflow: hidden"
         >
-      </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-        xl="3"
-        class="d-flex align-center justify-center pl-0 bg-surface"
-      >
-        <div
-          class="d-flex align-center justify-center py-5"
-          style="
-            width: 100%;
-            background-color: #ddd;
-            border-top: 10px #aaa solid;
-            border-bottom: 10px #aaa solid;
-          "
-        >
-          <v-icon
-            v-if="mdAndDown"
-            color="primary"
-            :size="smAndUp ? 200 : 100"
-            style="opacity: 0.65"
-            >mdi-shield-key</v-icon
-          >
-          <div class="text-center">
-            <h2 class="text-h3 font-weight-semibold mb-2">{{ APPLICATION_NAME }}</h2>
-            <div class="text-subtitle-1 mb-6 mt-n3 font-weight-bold">Yukon Government</div>
-            <div class="mt-6 text-center">
-              <v-btn
-                color="primary"
-                @click="loginWithRedirect"
-              >
-                Sign in
-              </v-btn>
-              <div class="text-subtitle-1 mt-5">Using your YNET Credentials</div>
-              <v-divider class="my-2" />
-              <em style="font-weight: 700">Secure Digital Storage</em>
-            </div>
-          </div>
-        </div>
+          <v-row>
+            <v-col
+              lg="7"
+              style="background-color: #e9f8fd"
+              class="d-none d-md-flex align-center justify-center"
+            >
+              <div class="d-none d-sm-block">
+                <img
+                  src="/Logo.png"
+                  alt="Logo"
+                  style="width: 300px"
+                  class="d-md-block pl-6"
+                />
+                <div class="align-center pa-6 pt-1">
+                  <h2
+                    class="text-h5 mb-2 text-center"
+                    style="line-height: 40px"
+                  >
+                    {{ APPLICATION_NAME }}
+                  </h2>
+                </div>
+              </div>
+            </v-col>
+            <v-col lg="5">
+              <div class="pa-7 pa-sm-12">
+                <div
+                  style="background-color: #e9f8fd"
+                  class="pa-5 d-md-none"
+                >
+                  <img
+                    src="/Logo.png"
+                    alt="Logo"
+                    style="width: 300px"
+                    class="d-md-inline"
+                  />
+                  <h2
+                    class="font-weight-medium text-center"
+                    style="line-height: 40px"
+                  >
+                    {{ APPLICATION_NAME }}
+                  </h2>
+                </div>
+
+                <h2 class="text-h5 mt-4">Sign in</h2>
+                <h6 class="text-subtitle-2 mt-3 mb-5">
+                  This application is only available to authorized users. If you have an account,
+                  click the button below.
+                </h6>
+
+                <v-btn
+                  dark
+                  color="primary"
+                  text="Sign In"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-card>
       </v-col>
     </v-row>
-  </div>
+  </v-container>
 </template>
 
-<script lang="ts" setup>
-import { onMounted } from "vue"
-import { useAuth0 } from "@auth0/auth0-vue"
-import { useDisplay } from "vuetify/lib/framework.mjs"
-
+<script setup lang="ts">
 import { APPLICATION_NAME } from "@/config"
-import useCurrentUser from "@/use/use-current-user"
-
-const { mdAndDown, smAndUp } = useDisplay()
-
-const { reset: resetCurrentUser } = useCurrentUser()
-
-const { loginWithRedirect } = useAuth0()
-
-onMounted(() => {
-  resetCurrentUser()
-})
 </script>

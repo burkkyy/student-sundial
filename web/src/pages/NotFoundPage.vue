@@ -9,11 +9,45 @@
   </v-container>
 </template>
 
-<script lang="ts" setup>
-import { APPLICATION_NAME } from "@/config"
-import useStatus from "@/use/use-status"
+<script setup lang="ts">
+import { onMounted, ref } from "vue"
 
-const { releaseTag, gitCommitHash } = useStatus()
+import http from "@/api/http-client"
+
+import { APPLICATION_NAME } from "@/config"
+
+const releaseTag = ref("not-set")
+const gitCommitHash = ref("not-set")
+
+const isLoading = ref(true)
+
+onMounted(async () => {
+  await refresh()
+})
+
+async function fetchVersion() {
+  return http
+    .get("/_status")
+    .then(({ data }) => {
+      releaseTag.value = data.RELEASE_TAG
+      gitCommitHash.value = data.GIT_COMMIT_HASH
+      return data
+    })
+    .catch((error: unknown) => {
+      console.error(`Error fetching version: ${error}`)
+    })
+}
+
+async function refresh() {
+  isLoading.value = true
+  try {
+    await fetchVersion()
+  } catch (error) {
+    console.error(`Error fetching version: ${error}`)
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
 
 <style scoped>

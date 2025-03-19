@@ -1,5 +1,5 @@
 {
-  "name": "digital-vault-development-tooling",
+  "name": "student-sundial-development-tooling",
   "private": true,
   "devDependencies": {
     "eslint": "^9.12.0",

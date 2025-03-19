@@ -349,25 +349,3 @@ template {
 [hidden] {
   display: none;
 }
-
-.v-data-table__tr:hover {
-  background-color: #eeeeee !important;
-}
-.v-card.toggle.active {
-  background-color: #faad1455 !important;
-}
-.v-card.toggle:not(.active) {
-  background-color: #faad14bb !important;
-}
-.v-table {
-  border: 1px #999 solid;
-  border-radius: 4px !important;
-}
-
-.v-table thead {
-  background-color: #ddd !important;
-}
-
-a {
-  color: #2a9e9e;
-}

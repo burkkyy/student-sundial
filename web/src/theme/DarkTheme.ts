@@ -1,42 +1,244 @@
-const darkTheme = {
-  name: "darkTheme",
+export type ThemeTypes = {
+  name: string
+  dark: boolean
+  variables?: object
+  colors: {
+    primary?: string
+    secondary?: string
+    info?: string
+    success?: string
+    accent?: string
+    warning?: string
+    error?: string
+    lightprimary?: string
+    lightsecondary?: string
+    lightsuccess?: string
+    lighterror?: string
+    lightinfo?: string
+    lightwarning?: string
+    textPrimary?: string
+    textSecondary?: string
+    borderColor?: string
+    hoverColor?: string
+    inputBorder?: string
+    containerBg?: string
+    background?: string
+    surface?: string
+    "on-surface-variant"?: string
+    grey100?: string
+    grey200?: string
+  }
+}
+
+const DARK_BLUE_THEME: ThemeTypes = {
+  name: "DARK_BLUE_THEME",
   dark: true,
   variables: {
-    "border-color": "#f0f0f0",
-    "carousel-control-size": 10,
-    gradient:
-      "linear-gradient(250.38deg, #e6f4ff 2.39%, #69b1ff 34.42%, #1677ff 60.95%, #0958d9 84.83%, #002c8c 104.37%)",
-    "card-shadow": "0px 1px 4px rgba(0, 0, 0, 0.08)",
+    "border-color": "#333F55",
   },
   colors: {
-    primary: "#faad14",
-    secondary: "#8c8c8c",
-    info: "#2A9E9E",
-    success: "#14fa3a",
-    accent: "#1E47A7",
-    warning: "#faad14",
-    error: "#fa3a14",
-    lightprimary: "#e6f4ff",
-    lightsecondary: "#f5f5f5",
-    lightsuccess: "#EAFCD4",
-    lighterror: "#FFE7D3",
-    lightwarning: "#FFF6D0",
-    darkText: "#212121",
-    lightText: "#8c8c8c",
-    darkprimary: "#0958d9",
-    darksecondary: "#f5f5f5",
-    borderLight: "#e6ebf1",
-    inputBorder: "#a1a1a5",
-    containerBg: "#fafafb",
-    surface: "#fff",
-    "on-surface-variant": "#fff",
-    facebook: "#4267b2",
-    twitter: "#1da1f2",
-    linkedin: "#0e76a8",
-    gray100: "#f5f5f5",
-    primary200: "#a1d2ff",
-    secondary200: "#eeeeee",
+    primary: "#1e88e5",
+    secondary: "#0cb9c5",
+    info: "#539BFF",
+    success: "#13DEB9",
+    accent: "#FA896B",
+    warning: "#FFAE1F",
+    error: "#FA896B",
+    lightprimary: "#253662",
+    lightsecondary: "#1C455D",
+    lightsuccess: "#1B3C48",
+    lighterror: "#4B313D",
+    lightwarning: "#4D3A2A",
+    lightinfo: "#223662",
+    textPrimary: "#EAEFF4",
+    textSecondary: "#7C8FAC",
+    borderColor: "#333F55",
+    inputBorder: "#465670",
+    containerBg: "#2a3447",
+    background: "#2a3447",
+    hoverColor: "#333f55",
+    surface: "#2a3447",
+    "on-surface-variant": "#2a3447",
+    grey100: "#333F55",
+    grey200: "#465670",
   },
 }
 
-export default darkTheme
+const DARK_AQUA_THEME: ThemeTypes = {
+  name: "DARK_AQUA_THEME",
+  dark: true,
+  variables: {
+    "border-color": "#333F55",
+  },
+  colors: {
+    primary: "#0074BA",
+    secondary: "#47D7BC",
+    info: "#539BFF",
+    success: "#13DEB9",
+    accent: "#FA896B",
+    warning: "#FFAE1F",
+    error: "#FA896B",
+    lightprimary: "#103247",
+    lightsecondary: "#0C4339",
+    lightsuccess: "#1B3C48",
+    lighterror: "#4B313D",
+    lightwarning: "#4D3A2A",
+    lightinfo: "#223662",
+    textPrimary: "#EAEFF4",
+    textSecondary: "#7C8FAC",
+    borderColor: "#333F55",
+    inputBorder: "#465670",
+    containerBg: "#171c23",
+    background: "#171c23",
+    hoverColor: "#333f55",
+    surface: "#171c23",
+    "on-surface-variant": "#171c23",
+    grey100: "#333F55",
+    grey200: "#465670",
+  },
+}
+
+const DARK_PURPLE_THEME: ThemeTypes = {
+  name: "DARK_PURPLE_THEME",
+  dark: true,
+  variables: {
+    "border-color": "#333F55",
+  },
+  colors: {
+    primary: "#763EBD",
+    secondary: "#95CFD5",
+    info: "#539BFF",
+    success: "#13DEB9",
+    accent: "#FA896B",
+    warning: "#FFAE1F",
+    error: "#FA896B",
+    lightprimary: "#26153C",
+    lightsecondary: "#09454B",
+    lightsuccess: "#1B3C48",
+    lighterror: "#4B313D",
+    lightwarning: "#4D3A2A",
+    lightinfo: "#223662",
+    textPrimary: "#EAEFF4",
+    textSecondary: "#7C8FAC",
+    borderColor: "#333F55",
+    inputBorder: "#465670",
+    containerBg: "#171c23",
+    background: "#171c23",
+    hoverColor: "#333f55",
+    surface: "#171c23",
+    "on-surface-variant": "#171c23",
+    grey100: "#333F55",
+    grey200: "#465670",
+  },
+}
+
+const DARK_GREEN_THEME: ThemeTypes = {
+  name: "DARK_GREEN_THEME",
+  dark: true,
+  variables: {
+    "border-color": "#333F55",
+  },
+  colors: {
+    primary: "#0A7EA4",
+    secondary: "#CCDA4E",
+    info: "#539BFF",
+    success: "#13DEB9",
+    accent: "#FA896B",
+    warning: "#FFAE1F",
+    error: "#FA896B",
+    lightprimary: "#05313F",
+    lightsecondary: "#282917",
+    lightsuccess: "#1B3C48",
+    lighterror: "#4B313D",
+    lightwarning: "#4D3A2A",
+    lightinfo: "#223662",
+    textPrimary: "#EAEFF4",
+    textSecondary: "#7C8FAC",
+    borderColor: "#333F55",
+    inputBorder: "#465670",
+    containerBg: "#171c23",
+    background: "#171c23",
+    hoverColor: "#333f55",
+    surface: "#171c23",
+    "on-surface-variant": "#171c23",
+    grey100: "#333F55",
+    grey200: "#465670",
+  },
+}
+
+const DARK_CYAN_THEME: ThemeTypes = {
+  name: "DARK_CYAN_THEME",
+  dark: true,
+  variables: {
+    "border-color": "#333F55",
+  },
+  colors: {
+    primary: "#01C0C8",
+    secondary: "#FB9678",
+    info: "#539BFF",
+    success: "#13DEB9",
+    accent: "#FA896B",
+    warning: "#FFAE1F",
+    error: "#FA896B",
+    lightprimary: "#003638",
+    lightsecondary: "#40241C",
+    lightsuccess: "#1B3C48",
+    lighterror: "#4B313D",
+    lightwarning: "#4D3A2A",
+    lightinfo: "#223662",
+    textPrimary: "#EAEFF4",
+    textSecondary: "#7C8FAC",
+    borderColor: "#333F55",
+    inputBorder: "#465670",
+    containerBg: "#171c23",
+    background: "#171c23",
+    hoverColor: "#333f55",
+    surface: "#171c23",
+    "on-surface-variant": "#171c23",
+    grey100: "#333F55",
+    grey200: "#465670",
+  },
+}
+
+const DARK_ORANGE_THEME: ThemeTypes = {
+  name: "DARK_ORANGE_THEME",
+  dark: true,
+  variables: {
+    "border-color": "#333F55",
+  },
+  colors: {
+    primary: "#FA896B",
+    secondary: "#0074BA",
+    info: "#539BFF",
+    success: "#13DEB9",
+    accent: "#FA896B",
+    warning: "#FFAE1F",
+    error: "#FA896B",
+    lightprimary: "#402E32",
+    lightsecondary: "#082E45",
+    lightsuccess: "#1B3C48",
+    lighterror: "#4B313D",
+    lightwarning: "#4D3A2A",
+    lightinfo: "#223662",
+    textPrimary: "#EAEFF4",
+    textSecondary: "#7C8FAC",
+    borderColor: "#333F55",
+    inputBorder: "#465670",
+    containerBg: "#171c23",
+    background: "#171c23",
+    hoverColor: "#333f55",
+    surface: "#171c23",
+    "on-surface-variant": "#171c23",
+    grey100: "#333F55",
+    grey200: "#465670",
+  },
+}
+
+export {
+  DARK_BLUE_THEME,
+  DARK_AQUA_THEME,
+  DARK_ORANGE_THEME,
+  DARK_PURPLE_THEME,
+  DARK_GREEN_THEME,
+  DARK_CYAN_THEME,
+}

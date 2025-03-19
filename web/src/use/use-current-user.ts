@@ -1,14 +1,8 @@
-import { computed, reactive, toRefs, unref } from "vue"
-import { isNil } from "lodash"
-import { DateTime } from "luxon"
+import { computed, reactive, toRefs } from "vue"
 
-import currentUserApi from "@/api/current-user-api"
-import usersApi, { type User, UserRoles } from "@/api/users-api"
-
-export { type User, UserRoles }
-
-// TODO: consider sending this with every api request?
-export const CURRENT_USERS_TIMEZONE = DateTime.local().zoneName
+import { sleep } from "@/utils/sleep"
+import usersApi, { RoleTypes, Role, User } from "@/api/users-api"
+import { isEmpty, isNil } from "lodash"
 
 // Global state
 const state = reactive<{
@@ -31,15 +25,27 @@ type LoadedState = Omit<State, "currentUser"> & {
 export function useCurrentUser<IsLoaded extends boolean = false>() {
   type StateOrLoadedState = IsLoaded extends true ? LoadedState : State
 
-  const isReady = computed(() => state.isCached && !state.isLoading && !state.isErrored)
+  const isReady = computed(() => !state.isLoading && !state.isErrored)
+
   const isSystemAdmin = computed(() => {
-    return state.currentUser?.roles.includes(UserRoles.SYSTEM_ADMIN)
+    return hasRole(RoleTypes.SYSTEM_ADMIN)
   })
+
+  function hasRole(desiredRole: RoleTypes): boolean {
+    if (isNil(state.currentUser?.roles)) return false
+    if (isEmpty(state.currentUser?.roles)) return false
+
+    const firstItem = state.currentUser?.roles[0]
+
+    if (typeof firstItem == "string")
+      return state.currentUser?.roles?.some((role) => role.role === desiredRole)
+    else return (state.currentUser?.roles as Role[])?.some(({ role }: Role) => role === desiredRole)
+  }
 
   async function fetch(): Promise<User> {
     state.isLoading = true
     try {
-      const { user } = await currentUserApi.get()
+      const { user } = await usersApi.fetchCurrentUser()
       state.isErrored = false
       state.currentUser = user
       state.isCached = true
@@ -53,32 +59,24 @@ export function useCurrentUser<IsLoaded extends boolean = false>() {
     }
   }
 
-  async function save(): Promise<User> {
-    if (isNil(state.currentUser)) {
-      throw new Error("No user to save")
+  async function ensure(): Promise<User | null> {
+    // TODO: add max timeout
+    while (state.isLoading) {
+      await sleep(75)
     }
 
-    const staticId = unref(state.currentUser.id)
-    if (isNil(staticId)) {
-      throw new Error("id is required")
+    if (state.isErrored) {
+      console.error("Current user store has errored, returning state.currentUser.")
+      return state.currentUser
     }
 
-    state.isLoading = true
-    try {
-      const { user } = await usersApi.update(staticId, state.currentUser)
-      state.isErrored = false
-      state.currentUser = user
-      return user
-    } catch (error) {
-      console.error("Failed to save current user:", error)
-      state.isErrored = true
-      throw error
-    } finally {
-      state.isLoading = false
-    }
+    // Trust the back-end and above logic; when state.isCached, user must be a full user.
+    if (state.isCached) return state.currentUser as User
+
+    return fetch()
   }
 
-  // Needs to be called during logout or current user will persist.
+  // I think this needs to be called during logout or current user will persist?
   function reset() {
     state.currentUser = null
     state.isLoading = false
@@ -89,12 +87,10 @@ export function useCurrentUser<IsLoaded extends boolean = false>() {
   return {
     ...toRefs(state as StateOrLoadedState),
     isReady,
-    fetch,
-    refresh: fetch,
-    reset,
-    save,
-    // Computed properties
     isSystemAdmin,
+    fetch,
+    ensure,
+    reset,
   }
 }
 

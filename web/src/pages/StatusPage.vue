@@ -34,13 +34,12 @@
   </v-app>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { computed, onMounted, reactive, ref } from "vue"
-import { useAuth0 } from "@auth0/auth0-vue"
 
 import http from "@/api/http-client"
 
-const { isAuthenticated } = useAuth0()
+const isAuthenticated = ref(true)
 
 const returnTo = computed<{ name: string; title: string }>(() => {
   if (isAuthenticated.value) {

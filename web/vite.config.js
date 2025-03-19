@@ -1,4 +1,4 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from "node:url"
 
 // Plugins
 import vue from "@vitejs/plugin-vue"
@@ -14,7 +14,7 @@ export default defineConfig({
     // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
     vuetify({
       autoImport: true,
-    }),
+    })
   ],
   build: {
     outDir: "./dist",
@@ -22,8 +22,7 @@ export default defineConfig({
   define: { "process.env": {} },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
     extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"],
   },

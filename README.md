@@ -6,8 +6,6 @@
 
 - [Node](https://nodejs.org/en) + [Express](https://expressjs.com/)
 
-- [Typescript](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html)
-
 - [Sequelize 7](https://sequelize.org/docs/v7/)
 
 - [Knex](https://knexjs.org/guide/)
@@ -25,11 +23,6 @@
 - Microsoft SQL Server - [MSSQL](https://www.postgresql.org/docs/current/app-psql.html)
 
 - [Docker Compose](https://docs.docker.com/compose/compose-file/)
-
-### Mail Server
-
-- Mail Dev - [MailDev](https://github.com/maildev/maildev?tab=readme-ov-file#docker-run)
-- [MailDev Docker Image](https://hub.docker.com/r/maildev/maildev)
 
 ---
 
@@ -141,10 +134,6 @@ You can also run migrations and seeding manually after login in to the web UI by
 
 You can also skip seeding if database is not empty by setting the `SKIP_SEEDING_UNLESS_EMPTY=true` environment variable.
 
-### Mail Service (a.k.a mail server)
-
-1. Access the web interface at http://localhost:1080
-
 ### Troubleshooting
 
 If you are getting a bunch of "Login required" errors in the console, make sure that you have disabled any kind of enhanced tracking protection.
@@ -247,57 +236,6 @@ Seeds currently don't keep track of whether they have run or not. As such, seed 
 If you want to take over a directory or file in Linux you can use `dev ownit <path-to-directory-or-file>`.
 
 If you are on Windows or Mac, and you want that to work, you should implement it in the `bin/dev` file. You might never actually need to take ownership of anything, so this might not be relevant to you.
-
-## Set up `dev` command
-
-The `dev` command vastly simplifies development using docker compose. It only requires `ruby`; however, `direnv` and `asdf` will make it easier to use.
-
-It's simply a wrapper around docker compose with the ability to quickly add custom helpers.
-
-All commands are just strings joined together, so it's easy to add new commmands. `dev` prints out each command that it runs, so that you can run the command manually to debug it, or just so you learn some docker compose syntax as you go.
-
-1. (optional) Install `asdf` as seen in https://asdf-vm.com/guide/getting-started.html.
-
-   e.g. for Linux
-
-   ```bash
-   apt install curl git
-
-   git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.12.0
-
-   echo '
-   # asdf
-   . "$HOME/.asdf/asdf.sh"
-   . "$HOME/.asdf/completions/asdf.bash"
-   ' >> ~/.bashrc
-   ```
-
-2. Install `ruby` via `asdf` as seen here https://github.com/asdf-vm/asdf-ruby, or using whatever custom Ruby install method works for your platform.
-
-   e.g. for Linux
-
-   ```bash
-   asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-
-   # install version from .tool-versions file
-   asdf install ruby
-
-   asdf reshim ruby
-   ```
-
-   You will now be able to run the `./bin/dev` command.
-
-3. (optional) Install [direnv](https://direnv.net/) and create an `.envrc` with
-
-   ```bash
-    #!/usr/bin/env bash
-
-    PATH_add bin
-   ```
-
-   and then run `direnv allow`.
-
-   You will now be able to do `dev xxx` instead ov `./bin/dev xxx`.
 
 # Deploying
 

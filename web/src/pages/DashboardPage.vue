@@ -1,71 +1,63 @@
 <template>
-  <h2 class="mb-3">Yukon Government's Digital Archive</h2>
   <v-row>
     <v-col
       cols="12"
-      md="8"
+      md="9"
     >
-      <v-card title="">
-        <v-card-text>
-          <p class="text-subtitle-1 mb-4">
-            The Vault provides Yukon Government with an enduring record of Archive Items and
-            Decisions. All staff can add items, but only those with special access privileges can
-            view them.
-          </p>
+      <TabCard :tabs="tabs">
+        <v-tabs-window-item :value="0">
+          <div class="mt-2 ml-1">
+            <router-link to="/courses">View all Courses</router-link>
+          </div>
+        </v-tabs-window-item>
 
-          <v-row>
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <ArchiveItemNewButton />
-            </v-col>
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <DecisionNewButton />
-            </v-col>
-          </v-row>
-
-          <v-row>
-            <v-col>
-              <p>
-                <router-link :to="{ name: 'archive-item/ArchiveItemListPage' }"
-                  >View the Archive Items</router-link
-                >
-              </p>
-            </v-col>
-            <v-col>
-              <p>
-                <router-link :to="{ name: 'decisions/DecisionListPage' }"
-                  >View the Decision Records</router-link
-                >
-              </p>
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
+        <v-tabs-window-item :value="1">
+          <div class="mt-2 ml-1">
+            <router-link to="/courses">View all Courses Events</router-link>
+          </div></v-tabs-window-item
+        >
+      </TabCard>
     </v-col>
-    <v-col>
-      <VaultInfoCard />
-      <VaultStatisticsCard />
+    <v-col
+      cols="12"
+      md="3"
+    >
+      <SimpleCard
+        title="Upcoming Deadlines"
+        color="error"
+      >
+        <ul class="ml-5">
+          <li>List of next 5 items coming due</li>
+          <li>Calendar view of next 30 days</li>
+        </ul>
+      </SimpleCard>
+
+      <SimpleCard
+        title="Statistics"
+        color="success"
+      >
+        <ul class="ml-5">
+          <li>Pie charts by status</li>
+          <li>Milestone cashflow by Month</li>
+          <li>Breakdowns by business unit</li>
+        </ul>
+      </SimpleCard>
     </v-col>
   </v-row>
 </template>
 
-<script lang="ts" setup>
-import ArchiveItemNewButton from "@/components/archive-item/ArchiveItemNewButton.vue"
-import VaultInfoCard from "@/components/common/VaultInfoCard.vue"
-import VaultStatisticsCard from "@/components/common/VaultStatisticsCard.vue"
-import DecisionNewButton from "@/components/decisions/DecisionNewButton.vue"
+<script setup lang="ts">
+import { ref } from "vue"
+
+import SimpleCard from "@/components/common/SimpleCard.vue"
+import TabCard from "@/components/common/TabCard.vue"
+
 import useBreadcrumbs from "@/use/use-breadcrumbs"
 
-useBreadcrumbs("Vault Home", [])
-</script>
+useBreadcrumbs("Dashboard", [])
 
-<style>
-.v-card-item__prepend i {
-  color: #7a7878;
-}
-</style>
+const tabs = ref([
+  { value: 0, title: "Open Courses", icon: "mdi-folder-question" },
+  { value: 1, title: "Open Courses events", icon: "mdi-folder-check" },
+])
+</script>

@@ -4,17 +4,13 @@ import usersApi, {
   type User,
   type UserWhereOptions,
   type UserFiltersOptions,
+  type UserQueryOptions,
 } from "@/api/users-api"
 
-export { type User, type UserWhereOptions, type UserFiltersOptions }
+export { type User, type UserWhereOptions, type UserFiltersOptions, type UserQueryOptions }
 
 export function useUsers(
-  queryOptions: Ref<{
-    where?: UserWhereOptions
-    filters?: UserFiltersOptions
-    page?: number
-    perPage?: number
-  }> = ref({}),
+  queryOptions: Ref<UserQueryOptions> = ref({}),
   { skipWatchIf = () => false }: { skipWatchIf?: () => boolean } = {}
 ) {
   const state = reactive<{
