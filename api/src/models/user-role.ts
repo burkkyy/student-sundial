@@ -3,58 +3,53 @@ import {
   DataTypes,
   InferAttributes,
   InferCreationAttributes,
+  Model,
   type NonAttribute,
-  sql,
 } from "@sequelize/core"
 import {
   Attribute,
   AutoIncrement,
   BelongsTo,
-  Default,
   NotNull,
   PrimaryKey,
+  ValidateAttribute,
 } from "@sequelize/core/decorators-legacy"
 
-import BaseModel from "@/models/base-model"
 import User from "@/models/user"
 
-export class UserPermission extends BaseModel<
-  InferAttributes<UserPermission>,
-  InferCreationAttributes<UserPermission>
-> {
+export enum RoleTypes {
+  SYSTEM_ADMIN = "SYSTEM_ADMIN",
+  PROFESSOR = "PROFESSOR",
+  STUDENT = "STUDENT",
+  USER = "USER",
+}
+
+export class UserRole extends Model<InferAttributes<UserRole>, InferCreationAttributes<UserRole>> {
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
   @AutoIncrement
   declare id: CreationOptional<number>
 
   @Attribute(DataTypes.INTEGER)
-  declare userId: number | null
+  @NotNull
+  declare userId: number
 
   @Attribute(DataTypes.STRING(100))
-  declare userEmail: string | null
-
-  @Attribute(DataTypes.INTEGER)
-  declare categoryId: number | null
-
-  @Attribute(DataTypes.INTEGER)
-  declare sourceId: number | null
-
-  @Attribute(DataTypes.INTEGER)
-  declare archiveItemId: number | null
-
-  @Attribute(DataTypes.BOOLEAN)
   @NotNull
-  @Default(false)
-  declare canViewAttachments: boolean
+  @ValidateAttribute({
+    isIn: {
+      args: [Object.values(RoleTypes)],
+      msg: `Role must be one of ${Object.values(RoleTypes).join(", ")}`,
+    },
+  })
+  declare role: RoleTypes
 
   @Attribute(DataTypes.DATE(0))
   @NotNull
-  @Default(sql.fn("getutcdate"))
   declare createdAt: CreationOptional<Date>
 
   @Attribute(DataTypes.DATE(0))
   @NotNull
-  @Default(sql.fn("getutcdate"))
   declare updatedAt: CreationOptional<Date>
 
   @Attribute(DataTypes.DATE(0))
@@ -64,14 +59,11 @@ export class UserPermission extends BaseModel<
   @BelongsTo(() => User, {
     foreignKey: "userId",
     inverse: {
-      as: "userPermissions",
+      as: "roles",
       type: "hasMany",
     },
   })
   declare user?: NonAttribute<User>
-
-  // Scopes
-  static establishScopes(): void {}
 }
 
-export default UserPermission
+export default UserRole

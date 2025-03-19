@@ -15,17 +15,20 @@ async function runMigrations(): Promise<void> {
     return
   }
 
-  for (const { file, directory } of pendingMigrations) {
-    logger.info(`Running migration: ${directory}/${file}`)
-    try {
-      await dbMigrationClient.migrate.up()
-    } catch (error) {
-      logger.error(`Error running migration: ${error}`, { error })
-      throw error
-    }
-  }
+  return pendingMigrations
+    .reduce(async (previousMigration, { file, directory }) => {
+      await previousMigration
 
-  logger.info("All migrations completed successfully.")
+      logger.info(`Running migration: ${directory}/${file}`)
+      return dbMigrationClient.migrate.up()
+    }, Promise.resolve())
+    .then(() => {
+      logger.info("All migrations completed successfully.")
+    })
+    .catch((error) => {
+      logger.error(`Error running migrations: ${error}`)
+      throw error
+    })
 }
 
 export default runMigrations

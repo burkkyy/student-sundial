@@ -25,48 +25,6 @@ export abstract class BaseModel<
     this.addScope("search", searchScopeFunction)
   }
 
-  // static findByPk<M extends Model, R = Attributes<M>>(
-  //   this: ModelStatic<M>,
-  //   identifier: unknown,
-  //   options: FindByPkOptions<M> & { raw: true; rejectOnEmpty?: false },
-  // ): Promise<R | null>;
-  // static findByPk<M extends Model, R = Attributes<M>>(
-  //   this: ModelStatic<M>,
-  //   identifier: unknown,
-  //   options: NonNullFindByPkOptions<M> & { raw: true },
-  // ): Promise<R>;
-  // static findByPk<M extends Model>(
-  //   this: ModelStatic<M>,
-  //   identifier: unknown,
-  //   options: NonNullFindByPkOptions<M>,
-  // ): Promise<M>;
-  // static findByPk<M extends Model>(
-  //   this: ModelStatic<M>,
-  //   identifier: unknown,
-  //   options?: FindByPkOptions<M>,
-  // ): Promise<M | null>;
-  public static async findBySlugOrPk<M extends BaseModel>(
-    this: ModelStatic<M>,
-    slugOrPk: string | number,
-    options?: Omit<FindOptions<Attributes<M>>, "where">
-  ): Promise<M | null> {
-    if (typeof slugOrPk === "number" || !isNaN(Number(slugOrPk))) {
-      const primaryKey = slugOrPk
-      return this.findByPk(primaryKey, options)
-    }
-
-    const slug = slugOrPk
-    if (!("slug" in this.getAttributes())) {
-      throw new Error(`${this.name} does not have a 'slug' attribute.`)
-    }
-
-    return this.findOne({
-      ...options,
-      // @ts-expect-error - We know that the model has a slug attribute, and are ignoring the TS error
-      where: { slug },
-    })
-  }
-
   // See api/node_modules/@sequelize/core/lib/model.d.ts -> findAll
   // Taken from https://api.rubyonrails.org/v7.1.0/classes/ActiveRecord/Batches.html#method-i-find_each
   // Enforces sort by id, overwriting any supplied order

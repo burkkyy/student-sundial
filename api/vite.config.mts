@@ -18,9 +18,6 @@ export default defineConfig({
         singleThread: true,
       },
     },
-    forceRerunTriggers: [
-      "**/*.(html|txt)", // Rerun tests when data files change
-    ],
     // Mocking
     clearMocks: true,
     mockReset: true,

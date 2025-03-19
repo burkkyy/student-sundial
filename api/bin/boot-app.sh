@@ -1,19 +1,16 @@
 #!/bin/sh
 
-if [ "$RUN_SCHEDULER" = "true" ]; then
-	echo "Running scheduler"
-	if [ "$NODE_ENV" = "production" ]; then
-		node ./dist/scheduler.js
-	else
-		npm run start:scheduler
-	fi
-	exit 0
+if [ "$NODE_ENV" != "production" ]; then
+  # Run initializers in development
+  npm run initializers
+else
+  # Run initializers in production
+  node ./dist/initializers/index.js
 fi
 
-if [ "$NODE_ENV" = "production" ]; then
-	node ./dist/initializers/index.js
-	node ./dist/server.js
+# Start the application
+if [ "$NODE_ENV" != "production" ]; then
+  npm run start
 else
-	npm run initializers
-	npm run start
+  node ./dist/server.js
 fi
