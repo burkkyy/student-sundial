@@ -3,19 +3,19 @@ import { stripTrailingSlash } from "@/utils/strip-trailing-slash"
 export const ENVIRONMENT = import.meta.env.MODE
 
 const prodConfig = {
-  domain: "https://dune-cx.us.auth0.com",
-  clientId: "ww5sYMg0xJyZPTbNa3gCfcL0f9JQEolW",
-  audience: "thrive",
+  domain: "https://dev-rzjcjlzhy63wjf31.us.auth0.com",
+  clientId: "TmJtOIRuRHC841MqXZZDJ2vBQJ8AgdCl",
+  audience: "testing",
   apiBaseUrl: "",
-  applicationName: "Foresight PM",
+  applicationName: "Student Sundial",
 }
 
 const devConfig = {
-  domain: "https://dune-cx.us.auth0.com",
-  clientId: "Bjuzy1WonTyMhuzVbC2BOwDFFg2D8091",
-  audience: "thrive",
+  domain: "https://dev-rzjcjlzhy63wjf31.us.auth0.com",
+  clientId: "TmJtOIRuRHC841MqXZZDJ2vBQJ8AgdCl",
+  audience: "testing",
   apiBaseUrl: "http://localhost:3000",
-  applicationName: "Foresight PM - DEV",
+  applicationName: "Student Sundial - DEV",
 }
 
 let config = prodConfig

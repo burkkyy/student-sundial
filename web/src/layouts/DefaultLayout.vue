@@ -80,19 +80,22 @@
 </template>
 
 <script setup lang="ts">
-import { RouterView, useRouter } from "vue-router"
+import { RouterView } from "vue-router"
 
+import { useAuth0 } from "@auth0/auth0-vue"
 import useCurrentUser from "@/use/use-current-user"
 
-import AppBreadcrumbs from "@/components/AppBreadcrumbs.vue"
+import AppBreadcrumbs from "@/components/common/AppBreadcrumbs.vue"
 
 const { currentUser, isSystemAdmin } = useCurrentUser<true>()
-
-const router = useRouter()
+const { logout } = useAuth0()
 
 async function logoutWrapper() {
-  router.push({
-    name: "DashboardPage",
+  await logout({
+    logoutParams: {
+      // I would prefer to redirect to /sign-in here, but that doesn't seem to work?
+      returnTo: window.location.origin,
+    },
   })
 }
 </script>

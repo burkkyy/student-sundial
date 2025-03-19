@@ -1,8 +1,4 @@
-import {
-  createRouter,
-  createWebHistory,
-  type RouteRecordRaw,
-} from "vue-router";
+import { type RouteRecordRaw } from "vue-router"
 
 const routes: RouteRecordRaw[] = [
   {
@@ -33,8 +29,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: "administration/AdministrationPage",
         path: "/administration",
-        component: () =>
-          import("@/pages/administration/AdministrationPage.vue"),
+        component: () => import("@/pages/administration/AdministrationPage.vue"),
       },
       {
         name: "administration/users/UsersPage",
@@ -54,28 +49,6 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
-];
+]
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-});
-
-router.beforeEach(async (to) => {
-  if (to.meta.requiresAuth === false) return true;
-  // TODO: consider whether I should redirect to /sign-in instead of the auth0 login page?
-  const isAuthenticated = true; // ignore for now
-  if (isAuthenticated) return true;
-
-  // TODO: consider loading user in route guard?
-  // check if current user exists
-  // attempt to load current user, unless it's already been loaded?
-  // if current user does not exist, attempt to create a new user
-  // if current user still does exist, throw some kind of error?
-  // if meta.requiresRoleAdmin (or whatever) does not match or exceed current user role
-  // return false
-
-  return false;
-});
-
-export default router;
+export default routes

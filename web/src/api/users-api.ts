@@ -37,14 +37,8 @@ export type UserWhereOptions = {
   isActive?: boolean
 }
 
-export type UserFiltersOptions = {
-  inTenant?: number
-  notInTenant?: number
-}
-
 export type UserQueryOptions = {
   where?: UserWhereOptions
-  filters?: UserFiltersOptions
   page?: number
   perPage?: number
 }

@@ -1,13 +1,8 @@
 import { type Ref, reactive, toRefs, ref, unref, watch } from "vue"
 
-import usersApi, {
-  type User,
-  type UserWhereOptions,
-  type UserFiltersOptions,
-  type UserQueryOptions,
-} from "@/api/users-api"
+import usersApi, { type User, type UserWhereOptions, type UserQueryOptions } from "@/api/users-api"
 
-export { type User, type UserWhereOptions, type UserFiltersOptions, type UserQueryOptions }
+export { type User, type UserWhereOptions, type UserQueryOptions }
 
 export function useUsers(
   queryOptions: Ref<UserQueryOptions> = ref({}),
