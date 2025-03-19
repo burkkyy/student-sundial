@@ -1,4 +1,4 @@
-# Yukon Government - Digital Vault web application
+# Student Sundial web application
 
 ## General Stack
 
