@@ -31,15 +31,15 @@
 1. Create a `api/.env.development` and populate with the following content: (if using docker ignore this step)
 
    ```bash
-      FRONTEND_URL=http://localhost:8080
-      VITE_AUTH0_DOMAIN=https://dev-rzjcjlzhy63wjf31.us.auth0.com
-      VITE_AUTH0_AUDIENCE=testing
-      VITE_AUTH0_CLIENT_ID=TmJtOIRuRHC841MqXZZDJ2vBQJ8AgdCl
-      MYSQL_HOST=localhost
-      MYSQL_USERNAME=root
-      MYSQL_PASSWORD=DevPwd99!
-      MYSQL_DATABASE=digital_vault_development
-      MYSQL_PORT=3306
+   FRONTEND_URL=http://localhost:8080
+   VITE_AUTH0_DOMAIN=https://dev-rzjcjlzhy63wjf31.us.auth0.com
+   VITE_AUTH0_AUDIENCE=testing
+   VITE_AUTH0_CLIENT_ID=TmJtOIRuRHC841MqXZZDJ2vBQJ8AgdCl
+   MYSQL_HOST=localhost
+   MYSQL_USERNAME=root
+   MYSQL_PASSWORD=DevPwd99!
+   MYSQL_DATABASE=digital_vault_development
+   MYSQL_PORT=3306
    ```
 
 2. In `api/` run `npm install`
@@ -72,14 +72,14 @@
 1. Boot only the web service using:
 
    ```bash
-      docker compose -f docker-compose.development.yml up web
+   docker compose -f docker-compose.development.yml up web
    ```
 
    Or
 
    ```bash
-      cd web
-      npm run start
+   cd web
+   npm run start
    ```
 
 2. Log in to the front-end service at http://localhost:8080
@@ -112,20 +112,11 @@ by default.
 
 TODO
 
-## Migrations - Database Management
-
-TODO
-
-### Seeding
-
-TODO
-
 # Deploying
 
 ## Production Environment (remote)
 
-1. Create the appropriate database, as specified by the `DB_DATABASE` environment variable, and
-2. Make sure the default `dbo` schema exists in that database.
+1. Create the appropriate database, as specified by the `MYSQL_DATABASE` environment variable, and
 
 ## Test Production Build Locally
 
