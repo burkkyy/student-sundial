@@ -1,85 +1,160 @@
-import {
-  type CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  NonAttribute,
-} from "@sequelize/core"
-import {
-  Attribute,
-  AutoIncrement,
-  HasMany,
-  NotNull,
-  PrimaryKey,
-} from "@sequelize/core/decorators-legacy"
+import { isEmpty, isNil } from "lodash"
 
-import BaseModel from "@/models/base-model"
+import db from "@/db/db-client"
+import logger from "@/utils/logger"
+
 import UserRole, { RoleTypes } from "@/models/user-role"
 
-export class User extends BaseModel<InferAttributes<User>, InferCreationAttributes<User>> {
-  @Attribute(DataTypes.INTEGER)
-  @PrimaryKey
-  @AutoIncrement
-  declare id: CreationOptional<number>
+export interface UserAttributes {
+  id: number
+  email: string
+  auth_subject: string
+  first_name?: string | null
+  last_name?: string | null
+  display_name?: string | null
+  title?: string | null
+  created_at?: Date
+  updated_at?: Date
+  deleted_at?: Date | null
+  roles?: UserRole[] // maybe shouldnt be here...
+}
 
-  @Attribute(DataTypes.STRING(100))
-  @NotNull
-  declare email: string
+export type UserWhereOptions = {
+  id?: number
+  email?: string
+  auth_subject?: string
+}
 
-  @Attribute(DataTypes.STRING(100))
-  @NotNull
-  declare authSubject: string
+export type UserQueryOptions = {
+  where?: UserWhereOptions
+}
 
-  @Attribute(DataTypes.STRING(100))
-  declare firstName: string | null
+export class User {
+  id: number
+  email: string
+  auth_subject: string
+  first_name?: string | null
+  last_name?: string | null
+  display_name?: string | null
+  title?: string | null
+  created_at?: Date
+  updated_at?: Date
+  deleted_at?: Date | null
 
-  @Attribute(DataTypes.STRING(100))
-  declare lastName: string | null
+  // associations
+  roles?: UserRole[]
 
-  @Attribute(DataTypes.STRING(200))
-  declare displayName: string | null
+  constructor(data: UserAttributes) {
+    this.id = data.id
+    this.email = data.email
+    this.auth_subject = data.auth_subject
+    this.first_name = data.first_name
+    this.last_name = data.last_name
+    this.display_name = data.display_name
+    this.title = data.title
+    this.created_at = data.created_at
+    this.updated_at = data.updated_at
+    this.deleted_at = data.deleted_at
 
-  @Attribute(DataTypes.STRING(100))
-  declare title: string | null
+    this.roles = data.roles // maybe shouldnt be here...
+  }
 
-  @Attribute(DataTypes.DATE(0))
-  @NotNull
-  declare createdAt: CreationOptional<Date>
-
-  @Attribute(DataTypes.DATE(0))
-  @NotNull
-  declare updatedAt: CreationOptional<Date>
-
-  @Attribute(DataTypes.DATE(0))
-  declare deletedAt: Date | null
-
-  // Associations
-  @HasMany(() => UserRole, {
-    foreignKey: "userId",
-    inverse: {
-      as: "User",
-    },
-  })
-  declare roles?: NonAttribute<UserRole[]>
-
-  get roleTypes(): NonAttribute<RoleTypes[]> {
+  get roleTypes(): RoleTypes[] {
     return this.roles?.map(({ role }) => role) || []
   }
 
-  get isSystemAdmin(): NonAttribute<boolean> {
+  get isSystemAdmin(): boolean {
     return this.roleTypes.includes(RoleTypes.SYSTEM_ADMIN)
   }
 
-  get isProfessor(): NonAttribute<boolean> {
+  get isProfessor(): boolean {
     return this.roleTypes.includes(RoleTypes.PROFESSOR)
   }
 
-  get isStudent(): NonAttribute<boolean> {
+  get isStudent(): boolean {
     return this.roleTypes.includes(RoleTypes.STUDENT)
   }
 
-  static establishScopes(): void {
-    this.addSearchScope(["firstName", "lastName", "displayName"])
+  static async findByPk(id: number): Promise<User> {
+    const rows = await db("users").select("*").where("id", id)
+
+    if (isEmpty(rows)) {
+      logger.error(`User with id ${id} not found`)
+      throw new Error("User not found")
+    }
+
+    const buildUser = new User(rows[0])
+
+    return buildUser
+  }
+
+  static async findAll(): Promise<User[]> {
+    const rows = await db("users").select("*")
+
+    if (isEmpty(rows)) {
+      logger.warn("No users where found")
+      return []
+    }
+
+    return rows.map((row) => new User(row))
+  }
+
+  static async findOne(params: UserQueryOptions): Promise<User | null> {
+    if (isNil(params.where)) return null
+
+    const row = await db("users").select("*").where(params.where).first()
+
+    if (isNil(row)) return null
+
+    const foundUser = new User(row)
+
+    return foundUser
+  }
+
+  async fetchRoles(): Promise<void> {
+    const roles = await db("user_roles").select("*").where({ user_id: this.id })
+    this.roles = roles as UserRole[]
+  }
+
+  /**
+   * Notice this function is static since its not per instance
+   *
+   * Controller should check if attributes are valid, we dont care here we
+   * just send it to the database
+   */
+  static async create(attributes: Partial<UserAttributes>): Promise<User> {
+    logger.info("USER CREATE ", attributes)
+
+    const [createdId] = await db("users").insert(attributes)
+
+    if (isNil(createdId)) {
+      logger.error("failed to create user with attributes: ", attributes)
+      throw new Error("Failed to create user")
+    }
+
+    const createdUser = await this.findByPk(createdId)
+
+    return createdUser
+  }
+
+  async update(attributes: Partial<UserAttributes>): Promise<void> {
+    logger.info("USER UPDATE", attributes)
+    const row = await db("users").where({ id: this.id }).update(attributes)
+
+    if (isNil(row)) {
+      logger.error(`failed to update user with id: ${this.id} with attributes: `, attributes)
+      throw new Error("Failed to update user")
+    }
+
+    Object.assign(this, row)
+  }
+
+  async destroy(): Promise<void> {
+    throw new Error("Not Implemented")
+  }
+
+  async sync(): Promise<void> {
+    await this.fetchRoles()
   }
 }
 

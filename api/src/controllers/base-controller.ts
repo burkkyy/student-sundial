@@ -1,10 +1,6 @@
 import { NextFunction, Request, Response } from "express"
-import { Attributes, Model, ScopeOptions, WhereOptions } from "@sequelize/core"
-import { isEmpty } from "lodash"
 
 import { User } from "@/models"
-
-export type BaseScopeOptions = string | ScopeOptions
 
 export type Actions = "index" | "show" | "new" | "edit" | "create" | "update" | "destroy"
 
@@ -13,7 +9,7 @@ type ControllerRequest = Request & {
 }
 
 // See https://guides.rubyonrails.org/routing.html#crud-verbs-and-actions
-export class BaseController<TModel extends Model = never> {
+export class BaseController {
   protected request: ControllerRequest
   protected response: Response
   protected next: NextFunction
@@ -116,33 +112,33 @@ export class BaseController<TModel extends Model = never> {
     }
   }
 
-  buildWhere<TModelOverride extends Model = TModel>(
-    overridableOptions: WhereOptions<Attributes<TModelOverride>> = {},
-    nonOverridableOptions: WhereOptions<Attributes<TModelOverride>> = {}
-  ): WhereOptions<Attributes<TModelOverride>> {
-    // TODO: consider if we should add parsing of Sequelize [Op.is] and [Op.not] here
-    // or in the api/src/utils/enhanced-qs-decoder.ts function
-    const queryWhere = this.query.where as WhereOptions<Attributes<TModelOverride>>
-    return {
-      ...overridableOptions,
-      ...queryWhere,
-      ...nonOverridableOptions,
-    } as WhereOptions<Attributes<TModelOverride>>
-  }
+  // buildWhere<TModelOverride extends Model = TModel>(
+  //   overridableOptions: WhereOptions<Attributes<TModelOverride>> = {},
+  //   nonOverridableOptions: WhereOptions<Attributes<TModelOverride>> = {}
+  // ): WhereOptions<Attributes<TModelOverride>> {
+  //   // TODO: consider if we should add parsing of Sequelize [Op.is] and [Op.not] here
+  //   // or in the api/src/utils/enhanced-qs-decoder.ts function
+  //   const queryWhere = this.query.where as WhereOptions<Attributes<TModelOverride>>
+  //   return {
+  //     ...overridableOptions,
+  //     ...queryWhere,
+  //     ...nonOverridableOptions,
+  //   } as WhereOptions<Attributes<TModelOverride>>
+  // }
 
-  buildFilterScopes<FilterOptions extends Record<string, unknown>>(
-    initialScopes: BaseScopeOptions[] = []
-  ): BaseScopeOptions[] {
-    const filters = this.query.filters as FilterOptions
-    const scopes = initialScopes
-    if (!isEmpty(filters)) {
-      Object.entries(filters).forEach(([key, value]) => {
-        scopes.push({ method: [key, value] })
-      })
-    }
+  // buildFilterScopes<FilterOptions extends Record<string, unknown>>(
+  //   initialScopes: BaseScopeOptions[] = []
+  // ): BaseScopeOptions[] {
+  //   const filters = this.query.filters as FilterOptions
+  //   const scopes = initialScopes
+  //   if (!isEmpty(filters)) {
+  //     Object.entries(filters).forEach(([key, value]) => {
+  //       scopes.push({ method: [key, value] })
+  //     })
+  //   }
 
-    return scopes
-  }
+  //   return scopes
+  // }
 }
 
 export default BaseController

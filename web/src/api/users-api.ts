@@ -9,7 +9,6 @@ export type User = {
   lastName: string | null
   displayName: string | null
   title: string | null
-  isActive: boolean
   createdAt: string
   updatedAt: string
   deletedAt: string
@@ -33,9 +32,8 @@ export type Role = {
   updatedAt: Date
 }
 
-export type UserWhereOptions = {
-  isActive?: boolean
-}
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type UserWhereOptions = {}
 
 export type UserQueryOptions = {
   where?: UserWhereOptions

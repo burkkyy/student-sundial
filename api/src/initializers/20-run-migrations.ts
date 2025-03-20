@@ -1,4 +1,4 @@
-import dbMigrationClient from "@/db/db-migration-client"
+import db from "@/db/db-client"
 import { logger } from "@/utils/logger"
 
 type MigrationInfo = {
@@ -8,7 +8,7 @@ type MigrationInfo = {
 
 async function runMigrations(): Promise<void> {
   const [_completedMigrations, pendingMigrations]: [MigrationInfo[], MigrationInfo[]] =
-    await dbMigrationClient.migrate.list()
+    await db.migrate.list()
 
   if (pendingMigrations.length === 0) {
     logger.info("No pending migrations.")
@@ -20,7 +20,7 @@ async function runMigrations(): Promise<void> {
       await previousMigration
 
       logger.info(`Running migration: ${directory}/${file}`)
-      return dbMigrationClient.migrate.up()
+      return db.migrate.up()
     }, Promise.resolve())
     .then(() => {
       logger.info("All migrations completed successfully.")

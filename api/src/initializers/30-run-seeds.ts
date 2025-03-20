@@ -1,9 +1,9 @@
-import dbMigrationClient from "@/db/db-migration-client"
+import db from "@/db/db-client"
 import { logger } from "@/utils/logger"
 
 export async function runSeeds(): Promise<void> {
   if (process.env.SKIP_SEEDING_UNLESS_EMPTY === "true") {
-    const count = await dbMigrationClient()
+    const count = await db()
       .count({ count: "*" })
       .then((result) => {
         const count = result[0].count
@@ -21,7 +21,7 @@ export async function runSeeds(): Promise<void> {
     }
   }
 
-  await dbMigrationClient.seed.run()
+  await db.seed.run()
   return
 }
 

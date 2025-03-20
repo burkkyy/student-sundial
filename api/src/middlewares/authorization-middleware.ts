@@ -14,9 +14,10 @@ async function findOrCreateUserFromAuth0Token(token: string): Promise<User | nul
   const { auth0Subject, email, firstName, lastName } = await auth0Integration.getUserInfo(token)
 
   const existingUser = await User.findOne({
-    where: { authSubject: auth0Subject },
-    include: ["roles"],
+    where: { auth_subject: auth0Subject },
   })
+
+  await existingUser?.fetchRoles()
 
   if (existingUser) {
     return existingUser
@@ -24,24 +25,26 @@ async function findOrCreateUserFromAuth0Token(token: string): Promise<User | nul
 
   const existingUserByEmail = await User.findOne({
     where: { email },
-    include: ["roles"],
   })
+
+  await existingUserByEmail?.fetchRoles()
 
   if (existingUserByEmail) {
     return existingUserByEmail
   }
 
   await User.create({
-    authSubject: auth0Subject,
+    auth_subject: auth0Subject,
     email,
-    firstName,
-    lastName,
+    first_name: firstName,
+    last_name: lastName,
   })
 
   const newUser = await User.findOne({
-    where: { authSubject: auth0Subject },
-    include: ["roles"],
+    where: { auth_subject: auth0Subject },
   })
+
+  await newUser?.fetchRoles()
 
   return newUser
 }
@@ -56,9 +59,10 @@ export async function ensureAndAuthorizeCurrentUser(
   next: NextFunction
 ) {
   const user = await User.findOne({
-    where: { authSubject: req.auth?.sub || "" },
-    include: ["roles"],
+    where: { auth_subject: req.auth?.sub || "" },
   })
+
+  await user?.fetchRoles()
 
   if (!isNil(user)) {
     req.currentUser = user

@@ -1,7 +1,7 @@
 import knex, { type Knex } from "knex"
 import { NODE_ENV } from "@/config"
 import { logger } from "@/utils/logger"
-import { buildKnexConfig } from "@/db/db-migration-client"
+import { buildKnexConfig } from "@/db/db-client"
 
 const dbConfig = buildKnexConfig() as Knex.Config & {
   connection: { user: string; database: string }
