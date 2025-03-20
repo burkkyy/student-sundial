@@ -3,7 +3,7 @@
 ## General Stack
 
 ### API (Back-end)
-a
+
 - [Node](https://nodejs.org/en) + [Express](https://expressjs.com/)
 
 - [Sequelize 7](https://sequelize.org/docs/v7/)
