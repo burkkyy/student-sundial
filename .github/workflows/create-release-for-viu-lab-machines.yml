@@ -38,20 +38,14 @@ jobs:
       run: ./bin/package-build.sh
 
     - name: Create release
-      id: create_release
       uses: ncipollo/release-action@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag: ${{ steps.generate_release_tag.outputs.next_release_tag }}
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./student-sundial-app.tar.gz
         asset_name: student-sundial-app.tar.gz
         asset_content_type: application/gzip
-
