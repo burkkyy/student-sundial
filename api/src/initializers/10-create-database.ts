@@ -1,6 +1,6 @@
 import knex, { type Knex } from "knex"
 
-import { MYSQL_DATABASE, NODE_ENV } from "@/config"
+import { MYSQL_DATABASE } from "@/config"
 import { logger } from "@/utils/logger"
 import { buildKnexConfig } from "@/db/db-client"
 
@@ -14,16 +14,7 @@ async function databaseExists(dbLegacy: Knex, databaseName: string): Promise<boo
 }
 
 async function createDatabase(): Promise<void> {
-  if (NODE_ENV === "production") {
-    logger.info(
-      "Skipping database creation initializer because production database sa:master credentials are not available."
-    )
-    return
-  } else {
-    dbConfig.connection.user = "root" // default user that should always exist
-    dbConfig.connection.database = "" // no db by default
-  }
-
+  dbConfig.connection.database = "" // no db by default
   const dbMigrationClient = knex(dbConfig)
 
   if (await databaseExists(dbMigrationClient, MYSQL_DATABASE)) return
