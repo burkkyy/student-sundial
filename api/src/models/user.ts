@@ -1,4 +1,4 @@
-import { isEmpty, isNil } from "lodash"
+import { isEmpty, isNil, isUndefined } from "lodash"
 
 import db from "@/db/db-client"
 import logger from "@/utils/logger"
@@ -44,19 +44,19 @@ export class User {
   // associations
   roles?: UserRole[]
 
-  constructor(data: UserAttributes) {
-    this.id = data.id
-    this.email = data.email
-    this.auth_subject = data.auth_subject
-    this.first_name = data.first_name
-    this.last_name = data.last_name
-    this.display_name = data.display_name
-    this.title = data.title
-    this.created_at = data.created_at
-    this.updated_at = data.updated_at
-    this.deleted_at = data.deleted_at
+  constructor(attributes: UserAttributes) {
+    this.id = attributes.id
+    this.email = attributes.email
+    this.auth_subject = attributes.auth_subject
+    this.first_name = attributes.first_name
+    this.last_name = attributes.last_name
+    this.display_name = attributes.display_name
+    this.title = attributes.title
+    this.created_at = attributes.created_at
+    this.updated_at = attributes.updated_at
+    this.deleted_at = attributes.deleted_at
 
-    this.roles = data.roles // maybe shouldnt be here...
+    this.roles = attributes.roles // maybe shouldnt be here...
   }
 
   get roleTypes(): RoleTypes[] {
@@ -88,8 +88,14 @@ export class User {
     return buildUser
   }
 
-  static async findAll(): Promise<User[]> {
-    const rows = await db("users").select("*")
+  static async findAll(params?: UserQueryOptions): Promise<User[]> {
+    let rows = []
+
+    if (isUndefined(params?.where)) {
+      rows = await db("users").select("*")
+    } else {
+      rows = await db("users").select("*").where(params.where)
+    }
 
     if (isEmpty(rows)) {
       logger.warn("No users where found")
@@ -116,12 +122,6 @@ export class User {
     this.roles = roles as UserRole[]
   }
 
-  /**
-   * Notice this function is static since its not per instance
-   *
-   * Controller should check if attributes are valid, we dont care here we
-   * just send it to the database
-   */
   static async create(attributes: Partial<UserAttributes>): Promise<User> {
     logger.info("USER CREATE ", attributes)
 
