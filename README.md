@@ -38,7 +38,7 @@
    MYSQL_HOST=localhost
    MYSQL_USERNAME=root
    MYSQL_PASSWORD=DevPwd99!
-   MYSQL_DATABASE=digital_vault_development
+   MYSQL_DATABASE=student_sundial_development
    MYSQL_PORT=3306
    ```
 
@@ -112,21 +112,11 @@ by default.
 
 TODO
 
-# Deploying
+# Deploying for Production
 
-## Production Environment (remote)
+1. Build for production via `./bin/build.sh`, with no errors it should create `app/`
 
-1. Create the appropriate database, as specified by the `MYSQL_DATABASE` environment variable, and
-
-## Test Production Build Locally
-
-Files:
-
-- [Dockerfile](./Dockerfile)
-- [docker-compose.yml](./docker-compose.yml)
-- Non-commited `.env` file
-
-1. Create a `.env` file in top level directory with the appropriate values.
+2. Create a `app/.env.production` and populate with the following content:
 
    ```bash
    VITE_APPLICATION_NAME="Student Sundial"
@@ -137,20 +127,24 @@ Files:
    MYSQL_PORT=3306
    MYSQL_USERNAME=root
    MYSQL_PASSWORD=DevPwd99!
-   MYSQL_DATABASE=digital_vault_development
+   MYSQL_DATABASE=student_sundial_production
 
-   VITE_API_BASE_URL="http://localhost:8080"
+   FRONTEND_URL=http://localhost:8080
    VITE_AUTH0_DOMAIN=https://dev-rzjcjlzhy63wjf31.us.auth0.com
    VITE_AUTH0_AUDIENCE=testing
    VITE_AUTH0_CLIENT_ID=TmJtOIRuRHC841MqXZZDJ2vBQJ8AgdCl
    ```
 
-2. Build and boot the production image via
+3. If your MYSQL credentials are still for the dev db, (ie testing production locally) then you have to start up the db locally via:
 
    ```bash
-   docker compose up --build
+   docker compose -f docker-compose.development.yml up --remove-orphans db
    ```
 
-3. Go to http://localhost:3000/ and log in.
+> Note this only starts up mariadb
 
-4. Navigate around the app and do some stuff and see if it works.
+4. Boot app via `./app/bin/boot-app.sh`
+
+5. Go to http://localhost:8080/ and log in.
+
+6. Navigate around the app and do some stuff and see if it works.
