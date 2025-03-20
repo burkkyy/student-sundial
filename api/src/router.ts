@@ -30,7 +30,7 @@ router.use("/migrate", migrator.migrationRouter)
 
 /*
 >>>>>>>>>>
-Add api routes below.
+Ignore all code above, add api routes below.
 Most routes are prolly just copy and paste of Users
 */
 
@@ -42,6 +42,8 @@ router
   .get(UsersController.show)
   .patch(UsersController.update)
   .delete(UsersController.destroy)
+
+// Routes for courses should here
 
 /*
 Ignore all code below

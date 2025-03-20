@@ -45,7 +45,7 @@ export const auth0Integration = {
     }
     const firstName = data.given_name || "UNKNOWN"
     const lastName = data.family_name || "UNKNOWN"
-    const fallbackEmail = `${firstName}.${lastName}@yukon-no-email.ca`
+    const fallbackEmail = `${firstName}.${lastName}@viu-no-email.ca`
 
     return {
       auth0Subject: data.sub,

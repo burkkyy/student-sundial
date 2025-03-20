@@ -69,7 +69,7 @@ services:
   #   environment:
   #     <<: *default-environment
   #     NODE_ENV: test
-  #     DB_DATABASE: digital_vault_test
+  #     DB_DATABASE: student_sundial_test
   #     DEFAULT_LOG_LEVEL: "info"
   #     DB_HEALTH_CHECK_START_PERIOD_SECONDS: 0
   #   tty: true

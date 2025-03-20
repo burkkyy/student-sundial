@@ -1,5 +1,5 @@
 import path from "path"
-
+import { isEmpty } from "lodash"
 import { type Knex } from "knex"
 import * as dotenv from "dotenv"
 
@@ -38,18 +38,18 @@ export const MYSQL_HOST = process.env.MYSQL_HOST || ""
 export const MYSQL_USERNAME = process.env.MYSQL_USERNAME || ""
 export const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD || ""
 export const MYSQL_DATABASE = process.env.MYSQL_DATABASE || ""
-export const MYSQL_PORT = parseInt(process.env.MYSQL_PORT || "1433")
+export const MYSQL_PORT = parseInt(process.env.MYSQL_PORT || "3306")
 
 export const RELEASE_TAG = process.env.RELEASE_TAG || ""
 export const GIT_COMMIT_HASH = process.env.GIT_COMMIT_HASH || ""
 
 export const DEFAULT_LOG_LEVEL = process.env.DEFAULT_LOG_LEVEL || "debug"
 
-if (MYSQL_DATABASE === undefined) throw new Error("database name is unset.")
-if (MYSQL_USERNAME === undefined) throw new Error("database username is unset.")
-if (MYSQL_PASSWORD === undefined) throw new Error("database password is unset.")
-if (MYSQL_HOST === undefined) throw new Error("database host is unset.")
-if (MYSQL_PORT === undefined) throw new Error("database port is unset.")
+if (isEmpty(MYSQL_DATABASE)) throw new Error("database name is unset.")
+if (isEmpty(MYSQL_USERNAME)) throw new Error("database username is unset.")
+if (isEmpty(MYSQL_PASSWORD)) throw new Error("database password is unset.")
+if (isEmpty(MYSQL_HOST)) throw new Error("database host is unset.")
+if (MYSQL_PORT === 0) throw new Error("database port is unset.")
 
 export const DB_LEGACY_CONFIG: Knex.Config = {
   client: "mysql",

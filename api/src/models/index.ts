@@ -1,17 +1,12 @@
 import db from "@/db/db-client"
 
-// Models
+// Import Models
 import User from "@/models/user"
 import UserRole from "@/models/user-role"
-
-// Add models to this list so they sync with db
-db.addModels([User, UserRole])
-
-// Lazy load scopes
-User.establishScopes()
+import Course from "@/models/course"
 
 // Export the models here so they can be imported
-export { User, UserRole }
+export { User, UserRole, Course }
 
 // Special db instance will all models loaded
 export default db

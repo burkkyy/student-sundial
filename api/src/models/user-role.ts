@@ -1,21 +1,9 @@
-import {
-  type CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-  type NonAttribute,
-} from "@sequelize/core"
-import {
-  Attribute,
-  AutoIncrement,
-  BelongsTo,
-  NotNull,
-  PrimaryKey,
-  ValidateAttribute,
-} from "@sequelize/core/decorators-legacy"
+import { isEmpty } from "lodash"
 
-import User from "@/models/user"
+import db from "@/db/db-client"
+import logger from "@/utils/logger"
+
+import { User } from "./user"
 
 export enum RoleTypes {
   SYSTEM_ADMIN = "SYSTEM_ADMIN",
@@ -24,46 +12,55 @@ export enum RoleTypes {
   USER = "USER",
 }
 
-export class UserRole extends Model<InferAttributes<UserRole>, InferCreationAttributes<UserRole>> {
-  @Attribute(DataTypes.INTEGER)
-  @PrimaryKey
-  @AutoIncrement
-  declare id: CreationOptional<number>
+export interface UserRoleAttributes {
+  id: number
+  userId: number
+  role: RoleTypes
+  createdAt?: Date
+  updatedAt?: Date
+  deletedAt?: Date | null
+}
 
-  @Attribute(DataTypes.INTEGER)
-  @NotNull
-  declare userId: number
+export class UserRole {
+  id: number
+  userId: number
+  role: RoleTypes
+  createdAt?: Date
+  updatedAt?: Date
+  deletedAt?: Date | null
 
-  @Attribute(DataTypes.STRING(100))
-  @NotNull
-  @ValidateAttribute({
-    isIn: {
-      args: [Object.values(RoleTypes)],
-      msg: `Role must be one of ${Object.values(RoleTypes).join(", ")}`,
-    },
-  })
-  declare role: RoleTypes
+  constructor(data: UserRoleAttributes) {
+    this.id = data.id
+    this.userId = data.userId
+    this.role = data.role
+    this.createdAt = data.createdAt
+    this.updatedAt = data.updatedAt
+    this.deletedAt = data.deletedAt
+  }
 
-  @Attribute(DataTypes.DATE(0))
-  @NotNull
-  declare createdAt: CreationOptional<Date>
+  static async findByPk(id: number): Promise<User> {
+    const rows = await db("users").select("*").where("id", id)
 
-  @Attribute(DataTypes.DATE(0))
-  @NotNull
-  declare updatedAt: CreationOptional<Date>
+    if (isEmpty(rows)) {
+      logger.error(`User with id ${id} not found`)
+      throw new Error("User not found")
+    }
 
-  @Attribute(DataTypes.DATE(0))
-  declare deletedAt: Date | null
+    const buildUser = new User(rows[0])
 
-  // Associations
-  @BelongsTo(() => User, {
-    foreignKey: "userId",
-    inverse: {
-      as: "roles",
-      type: "hasMany",
-    },
-  })
-  declare user?: NonAttribute<User>
+    return buildUser
+  }
+
+  static async findAll(): Promise<User[]> {
+    const rows = await db("users").select("*")
+
+    if (isEmpty(rows)) {
+      logger.warn("No users where found")
+      return []
+    }
+
+    return rows.map((row) => new User(row))
+  }
 }
 
 export default UserRole

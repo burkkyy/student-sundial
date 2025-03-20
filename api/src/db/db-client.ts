@@ -1,7 +1,14 @@
-import { Sequelize, Options } from "@sequelize/core"
-import { MariaDbDialect } from "@sequelize/mariadb"
+import path from "path"
+import knex from "knex"
 
-import { MYSQL_HOST, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE, MYSQL_PORT } from "@/config"
+import {
+  MYSQL_DATABASE,
+  MYSQL_HOST,
+  MYSQL_PASSWORD,
+  MYSQL_PORT,
+  MYSQL_USERNAME,
+  NODE_ENV,
+} from "@/config"
 
 if (MYSQL_DATABASE === undefined) throw new Error("database name is unset.")
 if (MYSQL_USERNAME === undefined) throw new Error("database username is unset.")
@@ -9,22 +16,44 @@ if (MYSQL_PASSWORD === undefined) throw new Error("database password is unset.")
 if (MYSQL_HOST === undefined) throw new Error("database host is unset.")
 if (MYSQL_PORT === undefined) throw new Error("database port is unset.")
 
-// See https://sequelize.org/docs/v7/databases/mariadb/
-export const SEQUELIZE_CONFIG: Options<MariaDbDialect> = {
-  dialect: MariaDbDialect,
-  port: MYSQL_PORT,
-  database: MYSQL_DATABASE,
-  user: MYSQL_USERNAME,
-  password: MYSQL_PASSWORD,
-  host: MYSQL_HOST,
-  //logging: NODE_ENV === "development" ? console.log : false,
-  define: {
-    underscored: true,
-    timestamps: true, // default - explicit for clarity.
-    paranoid: true, // adds deleted_at column
-  },
+export function buildKnexConfig(): knex.Knex.Config {
+  return {
+    client: "mysql",
+    connection: {
+      host: MYSQL_HOST,
+      user: MYSQL_USERNAME,
+      password: MYSQL_PASSWORD,
+      database: MYSQL_DATABASE,
+      port: MYSQL_PORT,
+      options: {
+        encrypt: true,
+        trustServerCertificate: NODE_ENV === "production" ? false : true,
+      },
+    },
+    migrations: {
+      directory: path.resolve(__dirname, "./migrations"),
+      extension: "ts",
+      stub: path.resolve(__dirname, "./templates/sample-migration.ts"),
+    },
+    seeds: {
+      directory: path.resolve(__dirname, `./seeds/${NODE_ENV}`),
+      extension: "ts",
+      stub: path.resolve(__dirname, "./templates/sample-seed.ts"),
+    },
+  }
 }
 
-const db = new Sequelize(SEQUELIZE_CONFIG)
+const config = buildKnexConfig()
+const db = knex(config)
+
+db.on("query", (query) => {
+  if (NODE_ENV === "production") {
+    console.log(`Executing: ${query.sql}`)
+  } else if (NODE_ENV === "test") {
+    // don't log anything
+  } else {
+    console.log(`Executing (default): ${query.sql} ${JSON.stringify(query.bindings)}`)
+  }
+})
 
 export default db

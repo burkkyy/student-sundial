@@ -1,7 +1,9 @@
 import knex, { type Knex } from "knex"
-import { NODE_ENV } from "@/config"
+
 import { logger } from "@/utils/logger"
-import { buildKnexConfig } from "@/db/db-migration-client"
+import { NODE_ENV } from "@/config"
+
+import { buildKnexConfig } from "@/db/db-client"
 
 const dbConfig = buildKnexConfig() as Knex.Config & {
   connection: { user: string; database: string }
@@ -40,14 +42,7 @@ export async function waitForDatabase({
   retries?: number
   startPeriodSeconds?: number
 } = {}): Promise<void> {
-  if (NODE_ENV === "production") {
-    logger.info(
-      "Falling back to local database credentials because production database sa:master credentials are not available."
-    )
-  } else {
-    dbConfig.connection.user = "root" // default user that should always exist
-    dbConfig.connection.database = "" // no db by default
-  }
+  dbConfig.connection.database = "" // no db by default
 
   const dbMigrationClient = knex(dbConfig)
 

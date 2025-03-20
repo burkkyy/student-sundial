@@ -6,22 +6,14 @@ import BaseController from "@/controllers/base-controller"
 
 import { User } from "@/models"
 
-export class UsersController extends BaseController<User> {
+export class UsersController extends BaseController {
   async index() {
     try {
-      const where = this.buildWhere()
-
-      const totalCount = await User.count({ where })
-      const users = await User.findAll({
-        where,
-        limit: this.pagination.limit,
-        offset: this.pagination.offset,
-        include: ["roles"],
-      })
+      const users = await User.findAll()
 
       return this.response.json({
         users,
-        totalCount,
+        totalCount: users.length,
       })
     } catch (error) {
       logger.error(error)
@@ -50,7 +42,7 @@ export class UsersController extends BaseController<User> {
 
   async create() {
     try {
-      // Could use policy here to only allow permitted attributes for create
+      // policy here to only allow permitted attributes for create?
       const newUser = await User.create(this.request.body)
       return this.response.status(201).json({ user: newUser })
     } catch (error) {
@@ -67,7 +59,7 @@ export class UsersController extends BaseController<User> {
         return this.response.status(404).json({ message: "User not found." })
       }
 
-      // Could use policy here to only allow permitted attributes to update
+      // policy here to only allow permitted attributes to update?
       const newUser = await user.update(this.request.body)
       return this.response.status(200).json({ user: newUser })
     } catch (error) {
@@ -84,7 +76,7 @@ export class UsersController extends BaseController<User> {
         return this.response.status(404).json({ message: "User not found." })
       }
 
-      // Could use policy here to check if autherized to delete this user
+      // policy here to check if autherized to delete this user?
       await user.destroy()
       return this.response.status(204).json({ message: "User deleted" })
     } catch (error) {
@@ -94,7 +86,16 @@ export class UsersController extends BaseController<User> {
   }
 
   private async loadUser(): Promise<User | null> {
-    return User.findByPk(this.params.userId, { include: ["roles"] })
+    const id = Number(this.params.userId)
+
+    if (isNil(id)) {
+      throw new Error("Invalid userId param passed")
+    }
+
+    const user = await User.findByPk(id)
+    await user.sync()
+
+    return user
   }
 }
 
