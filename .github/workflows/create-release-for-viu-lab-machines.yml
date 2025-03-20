@@ -37,18 +37,8 @@ jobs:
     - name: Packaging build
       run: ./bin/package-build.sh
 
-    - name: Debug token and permissions
-      run: printenv GITHUB_TOKEN
-
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
         tag: ${{ steps.generate_release_tag.outputs.next_release_tag }}
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./student-sundial-app.tar.gz
-        asset_name: student-sundial-app.tar.gz
-        asset_content_type: application/gzip
+        artifacts: "./student-sundial-app.tar.gz"
