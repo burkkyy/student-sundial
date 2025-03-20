@@ -38,7 +38,7 @@ jobs:
       run: ./bin/package-build.sh
 
     - name: Debug token and permissions
-      run: echo "Token exists: $GITHUB_TOKEN"
+      run: printenv GITHUB_TOKEN
 
     - name: Create release
       uses: ncipollo/release-action@v1
