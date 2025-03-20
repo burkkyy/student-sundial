@@ -114,6 +114,37 @@ TODO
 
 # Deploying for Production
 
+## Deploying production to remote
+
+1. Download latest release at https://github.com/burkkyy/student-sundial/releases/latest
+
+2. Extract via `tar -xf student-sundial-app.tar.gz`
+
+3. In `app/`, create a `.env.production` and populate with the following content:
+
+   ```bash
+   VITE_APPLICATION_NAME="Student Sundial"
+   HOST_PORT=8080
+   API_PORT=8080
+
+   MYSQL_HOST=
+   MYSQL_PORT=3306
+   MYSQL_USERNAME=
+   MYSQL_PASSWORD=
+   MYSQL_DATABASE=
+
+   FRONTEND_URL=http://localhost:8080
+   VITE_AUTH0_DOMAIN=https://dev-rzjcjlzhy63wjf31.us.auth0.com
+   VITE_AUTH0_AUDIENCE=testing
+   VITE_AUTH0_CLIENT_ID=TmJtOIRuRHC841MqXZZDJ2vBQJ8AgdCl
+   ```
+
+4. Set env to production via `export NODE_ENV=production`
+
+5. Run app via `./app/bin/boot-app.sh`
+
+## Testing production build locally
+
 1. Build for production via `./bin/build.sh`, with no errors it should create `app/`
 
 2. Create a `app/.env.production` and populate with the following content:
