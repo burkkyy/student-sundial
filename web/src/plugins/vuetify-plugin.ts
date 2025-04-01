@@ -15,6 +15,7 @@ import { createVuetify } from "vuetify"
 import * as components from "vuetify/components"
 import * as directives from "vuetify/directives"
 import * as labsComponents from "vuetify/labs/components"
+import { VCalendar } from 'vuetify/labs/VCalendar'
 
 import { STUDENT_SUNDIAL_THEME } from "@/theme/LightTheme"
 
@@ -23,6 +24,7 @@ export default createVuetify({
   components: {
     ...components,
     ...labsComponents,
+    VCalendar,
   },
   theme: {
     defaultTheme: "STUDENT_SUNDIAL_THEME",
