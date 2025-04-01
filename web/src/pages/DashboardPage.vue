@@ -44,7 +44,17 @@
       </SimpleCard>
     </v-col>
   </v-row>
+
+  <v-btn
+    text="Press Me"
+    @click="foo"
+  />
+
+  <br />
   {{ currentUser }}
+  <br />
+  <br />
+  {{ user }}
 </template>
 
 <script setup lang="ts">
@@ -53,10 +63,19 @@ import { ref } from "vue"
 import SimpleCard from "@/components/common/SimpleCard.vue"
 import TabCard from "@/components/common/TabCard.vue"
 
+import { useAuth0 } from "@auth0/auth0-vue"
+
 import useBreadcrumbs from "@/use/use-breadcrumbs"
 import useCurrentUser from "@/use/use-current-user"
 
+import googleCalendarApi from "@/api/google-calendar-api"
+
 const { currentUser } = useCurrentUser()
+const { user } = useAuth0()
+
+async function foo() {
+  await googleCalendarApi.listEvents()
+}
 
 useBreadcrumbs("Dashboard", [])
 

@@ -32,6 +32,10 @@ export const AUTH0_DOMAIN = stripTrailingSlash(process.env.VITE_AUTH0_DOMAIN || 
 export const AUTH0_AUDIENCE = process.env.VITE_AUTH0_AUDIENCE
 export const AUTH0_REDIRECT = process.env.VITE_AUTH0_REDIRECT || process.env.FRONTEND_URL || ""
 
+export const AUTH0_MANAGEMENT_AUDIENCE = process.env.AUTH0_MANAGEMENT_AUDIENCE || ""
+export const AUTH0_MANAGEMENT_CLIENT_ID = process.env.AUTH0_MANAGEMENT_CLIENT_ID || ""
+export const AUTH0_MANAGEMENT_CLIENT_SECRET = process.env.AUTH0_MANAGEMENT_CLIENT_SECRET || ""
+
 export const APPLICATION_NAME = process.env.VITE_APPLICATION_NAME || ""
 
 export const MYSQL_HOST = process.env.MYSQL_HOST || ""

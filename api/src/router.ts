@@ -11,7 +11,7 @@ import migrator from "@/db/migrator"
 import jwtMiddleware from "@/middlewares/jwt-middleware"
 import { ensureAndAuthorizeCurrentUser } from "@/middlewares/authorization-middleware"
 
-import { CurrentUserController, UsersController } from "@/controllers"
+import { CurrentUserController, UsersController, GoogleCalendarController } from "@/controllers"
 
 import { logger } from "@/utils/logger"
 
@@ -49,6 +49,16 @@ router
 Ignore all code below
 <<<<<<<<<<
 */
+
+router
+  .route("/api/google-calendar")
+  .get(GoogleCalendarController.index)
+  .post(GoogleCalendarController.create)
+router
+  .route("/api/google-calendar/:id")
+  .get(GoogleCalendarController.show)
+  .patch(GoogleCalendarController.update)
+  .delete(GoogleCalendarController.destroy)
 
 // if no other routes match, return a 404
 router.use("/api", (_req: Request, res: Response) => {

@@ -43,6 +43,12 @@ const routes: RouteRecordRaw[] = [
         props: true,
       },
       {
+        path: "/errors/unauthorized",
+        name: "UnauthorizedPage",
+        component: () => import("@/pages/UnauthorizedPage.vue"),
+        meta: { requiresAuth: false },
+      },
+      {
         name: "NotFoundPage",
         path: "/:pathMatch(.*)*",
         component: () => import("@/pages/NotFoundPage.vue"),
