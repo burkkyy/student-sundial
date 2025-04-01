@@ -30,7 +30,7 @@ export class Course {
 
   static async findByPk(id: number): Promise<Course> {
     logger.info(`finding course with primary key: ${id}`)
-
+    
     throw new Error("Not implemented")
   }
 
