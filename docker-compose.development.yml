@@ -26,10 +26,10 @@ x-default-environment: &default-environment
 services:
   api:
     build:
-      context: .\api
+      context: ./api
       dockerfile: development.Dockerfile
     env_file:
-      - .\api\.env.development
+      - ./api/.env.development
     environment:
       <<: *default-environment
     tty: true # allows attaching debugger, equivalent of docker exec -t
@@ -37,32 +37,27 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - .\api:/usr/src/api
-      - .\.gitignore:/usr/src/.gitignore
-      - .\.prettierrc.yaml:/usr/src/.prettierrc.yaml
+      - ./api:/usr/src/api
+      - ./.gitignore:/usr/src/.gitignore
+      - ./.prettierrc.yaml:/usr/src/.prettierrc.yaml
     depends_on:
       - db
-    dns:
-      - 10.200.8.97
-      - 10.200.8.3
+      #- mail
 
   web:
     build:
-      context: .\web
+      context: ./web
       dockerfile: development.Dockerfile
     environment:
       <<: *default-environment
     ports:
       - "8080:8080"
     volumes:
-      - .\web:/usr/src/web
-      - .\.gitignore:/usr/src/.gitignore
-      - .\.prettierrc.yaml:/usr/src/.prettierrc.yaml
+      - ./web:/usr/src/web
+      - ./.gitignore:/usr/src/.gitignore
+      - ./.prettierrc.yaml:/usr/src/.prettierrc.yaml
     depends_on:
       - api
-    dns:
-      - 10.200.8.97
-      - 10.200.8.3
 
   # test_api:
   #   build:
