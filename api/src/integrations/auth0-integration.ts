@@ -1,10 +1,23 @@
 import axios from "axios"
-import { isNil } from "lodash"
+import { isEmpty, isNil } from "lodash"
 
-import { AUTH0_DOMAIN } from "@/config"
+import {
+  AUTH0_DOMAIN,
+  AUTH0_MANAGEMENT_AUDIENCE,
+  AUTH0_MANAGEMENT_CLIENT_ID,
+  AUTH0_MANAGEMENT_CLIENT_SECRET,
+} from "@/config"
+import logger from "@/utils/logger"
 
 const auth0Api = axios.create({
   baseURL: AUTH0_DOMAIN,
+})
+
+const auth0ManagementApi = axios.create({
+  baseURL: AUTH0_DOMAIN,
+  headers: {
+    audience: AUTH0_MANAGEMENT_AUDIENCE,
+  },
 })
 
 export interface Auth0UserInfo {
@@ -12,6 +25,16 @@ export interface Auth0UserInfo {
   firstName: string
   lastName: string
   auth0Subject: string
+}
+
+export interface Auth0IdentityInfo {
+  provider: string
+  user_id: string
+  connection: string
+  isSocial: boolean
+  access_token?: string
+  refresh_token?: string
+  expires_in?: number
 }
 
 export interface Auth0Response {
@@ -27,7 +50,7 @@ export interface Auth0Response {
 }
 
 export class Auth0PayloadError extends Error {
-  constructor(data: any) {
+  constructor(data: unknown) {
     super(`Payload from Auth0 is strange or failed for: ${JSON.stringify(data)}`)
     this.name = "Auth0PayloadError"
   }
@@ -53,6 +76,38 @@ export const auth0Integration = {
       firstName,
       lastName,
     }
+  },
+
+  async getUserIdentities(sub: string): Promise<Auth0IdentityInfo[]> {
+    try {
+      const { data: tokenData } = await auth0ManagementApi.post("/oauth/token", {
+        client_id: AUTH0_MANAGEMENT_CLIENT_ID,
+        client_secret: AUTH0_MANAGEMENT_CLIENT_SECRET,
+        audience: AUTH0_MANAGEMENT_AUDIENCE,
+        grant_type: "client_credentials",
+      })
+
+      const { data } = await auth0ManagementApi.get(`/api/v2/users/${encodeURIComponent(sub)}`, {
+        headers: {
+          authorization: `Bearer ${tokenData.access_token}`,
+        },
+      })
+
+      return data.identities || []
+    } catch (error) {
+      logger.error("failed to fetch auth0 user identities: ", { error })
+      throw error
+    }
+  },
+
+  async getGoogleAccessToken(sub: string): Promise<string | undefined> {
+    const identities = await this.getUserIdentities(sub)
+    if (isEmpty(identities)) throw new Error("No auth0 identities were found")
+
+    const googleIdentity = identities.find((id) => id.provider === "google-oauth2")
+    if (isNil(googleIdentity)) throw new Error("No auth0 identities were found")
+
+    return googleIdentity.access_token
   },
 }
 
