@@ -44,6 +44,8 @@ export const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD || ""
 export const MYSQL_DATABASE = process.env.MYSQL_DATABASE || ""
 export const MYSQL_PORT = parseInt(process.env.MYSQL_PORT || "3306")
 
+export const PDF_PARSER_JS = process.env.PDF_PARSER_JS || ""
+
 export const RELEASE_TAG = process.env.RELEASE_TAG || ""
 export const GIT_COMMIT_HASH = process.env.GIT_COMMIT_HASH || ""
 
