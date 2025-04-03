@@ -11,7 +11,18 @@ import migrator from "@/db/migrator"
 import jwtMiddleware from "@/middlewares/jwt-middleware"
 import { ensureAndAuthorizeCurrentUser } from "@/middlewares/authorization-middleware"
 
-import { CurrentUserController, UsersController } from "@/controllers"
+import {
+  BlocksController,
+  CoursesController,
+  CourseTasksController,
+  CurrentUserController,
+  EnrollmentsController,
+  GoogleCalendarController,
+  SectionBlocksController,
+  SectionsController,
+  TeachingsController,
+  UsersController,
+} from "@/controllers"
 
 import { logger } from "@/utils/logger"
 
@@ -28,12 +39,6 @@ router.route("/_status").get((_req: Request, res: Response) => {
 router.use("/api", jwtMiddleware, ensureAndAuthorizeCurrentUser)
 router.use("/migrate", migrator.migrationRouter)
 
-/*
->>>>>>>>>>
-Ignore all code above, add api routes below.
-Most routes are prolly just copy and paste of Users
-*/
-
 // Users
 router.route("/api/current-user").get(CurrentUserController.show).put(CurrentUserController.update)
 router.route("/api/users").get(UsersController.index).post(UsersController.create)
@@ -43,12 +48,86 @@ router
   .patch(UsersController.update)
   .delete(UsersController.destroy)
 
-// Routes for courses should here
+// Google Calendar
+router
+  .route("/api/google-calendar")
+  .get(GoogleCalendarController.index)
+  .post(GoogleCalendarController.create)
+router
+  .route("/api/google-calendar/:id")
+  .get(GoogleCalendarController.show)
+  .patch(GoogleCalendarController.update)
+  .delete(GoogleCalendarController.destroy)
 
-/*
-Ignore all code below
-<<<<<<<<<<
-*/
+// Blocks
+router.route("/api/blocks").get(BlocksController.index).post(BlocksController.create)
+router
+  .route("/api/blocks/:blockId")
+  .get(BlocksController.show)
+  .patch(BlocksController.update)
+  .delete(BlocksController.destroy)
+
+// Courses
+router.route("/api/courses").get(CoursesController.index).post(CoursesController.create)
+router
+  .route("/api/courses/:courseId")
+  .get(CoursesController.show)
+  .patch(CoursesController.update)
+  .delete(CoursesController.destroy)
+
+// Course Tasks
+router
+  .route("/api/course-tasks")
+  .get(CourseTasksController.index)
+  .post(CourseTasksController.create)
+router
+  .route("/api/course-tasks/:courseTaskId")
+  .get(CourseTasksController.show)
+  .patch(CourseTasksController.update)
+  .delete(CourseTasksController.destroy)
+
+// Enrollemnts
+router.route("/api/enrollments").get(EnrollmentsController.index).post(EnrollmentsController.create)
+router
+  .route("/api/enrollments/:enrollmentId")
+  .get(EnrollmentsController.show)
+  .patch(EnrollmentsController.update)
+  .delete(EnrollmentsController.destroy)
+
+// Section Blocks
+router
+  .route("/api/section-blocks")
+  .get(SectionBlocksController.index)
+  .post(SectionBlocksController.create)
+router
+  .route("/api/section-blocks/:sectionBlockId")
+  .get(SectionBlocksController.show)
+  .patch(SectionBlocksController.update)
+  .delete(SectionBlocksController.destroy)
+
+// Section Blocks
+router.route("/api/users").get(UsersController.index).post(UsersController.create)
+router
+  .route("/api/users/:userId")
+  .get(UsersController.show)
+  .patch(UsersController.update)
+  .delete(UsersController.destroy)
+
+// Sections
+router.route("/api/sections").get(SectionsController.index).post(SectionsController.create)
+router
+  .route("/api/sections/:sectionId")
+  .get(SectionsController.show)
+  .patch(SectionsController.update)
+  .delete(SectionsController.destroy)
+
+// Teachings
+router.route("/api/teachings").get(TeachingsController.index).post(TeachingsController.create)
+router
+  .route("/api/teachings/:teachingId")
+  .get(TeachingsController.show)
+  .patch(TeachingsController.update)
+  .delete(TeachingsController.destroy)
 
 // if no other routes match, return a 404
 router.use("/api", (_req: Request, res: Response) => {
