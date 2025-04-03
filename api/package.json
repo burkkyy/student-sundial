@@ -1,5 +1,4 @@
 {
-  "type": "module"
   "name": "student-sundial-api",
   "private": true,
   "version": "0.0.0",
@@ -12,7 +11,7 @@
     "ts-node": "ts-node -r tsconfig-paths/register --logError",
     "knex": "ts-node -r tsconfig-paths/register ./node_modules/.bin/knex --knexfile src/config.d/knexfile.ts",
     "initializers": "ts-node -r tsconfig-paths/register --files src/initializers/index.ts",
-    "test": "ts-node-dev -r tsconfig-paths/register tests/parser.test.ts",
+    "test": "ts-node -r tsconfig-paths/register tests/tests.ts",
     "lint": "eslint . --ext .js,.ts --ignore-path ../.gitignore",
     "check-types": "tsc -p tests/tsconfig.json --noEmit"
   },
@@ -47,6 +46,7 @@
     "@types/lodash": "^4.17.1",
     "@types/luxon": "^3.4.2",
     "@types/mjml": "^4.7.4",
+    "@types/node": "^22.13.17",
     "@types/node-schedule": "^2.1.5",
     "@types/nodemailer": "^6.4.15",
     "@types/supertest": "^6.0.2",
