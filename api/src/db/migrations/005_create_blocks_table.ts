@@ -5,6 +5,7 @@ export async function up(knex: knex.Knex): Promise<void> {
     table.increments("id").notNullable().primary()
     table.datetime("start_at").notNullable()
     table.datetime("end_at").notNullable()
+    table.string("days", 100).notNullable()
     table.string("location", 100).nullable()
     table.string("recurrence", 100).nullable()
     table.boolean("is_cancelled").nullable()

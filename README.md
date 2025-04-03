@@ -40,6 +40,7 @@
    MYSQL_PASSWORD=DevPwd99!
    MYSQL_DATABASE=student_sundial_development
    MYSQL_PORT=3306
+   PDF_PARSER_JS=/usr/src/api/src/lib/pdf-parser/pdf-parser.mjs
    ```
 
 2. In `api/` run `npm install`
@@ -123,6 +124,7 @@ TODO
 3. In `app/`, create a `.env.production` and populate with the following content:
 
    ```bash
+   NODE_ENV=production
    VITE_APPLICATION_NAME="Student Sundial"
    HOST_PORT=8080
    API_PORT=8080
@@ -137,9 +139,10 @@ TODO
    VITE_AUTH0_DOMAIN=https://dev-rzjcjlzhy63wjf31.us.auth0.com
    VITE_AUTH0_AUDIENCE=testing
    VITE_AUTH0_CLIENT_ID=TmJtOIRuRHC841MqXZZDJ2vBQJ8AgdCl
+   PDF_PARSER_JS=/usr/src/api/src/lib/pdf-parser/pdf-parser.mjs
    ```
 
-4. Set env to production via `export NODE_ENV=production`
+4. (ignore if set in .env) Set env to production via `export NODE_ENV=production`
 
 5. Run app via `./app/bin/boot-app.sh`
 
