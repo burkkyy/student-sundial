@@ -7,9 +7,9 @@ export interface CourseAttributes {
   id: number
   name: string
   description: string
-  created_at?: Date
-  updated_at?: Date
-  deleted_at?: Date | null
+  created_at?: string
+  updated_at?: string
+  deleted_at?: string | null
 }
 
 export type CourseWhereOptions = {
@@ -25,9 +25,9 @@ export class Course {
   id: number
   name: string
   description: string
-  created_at?: Date
-  updated_at?: Date
-  deleted_at?: Date | null
+  created_at?: string
+  updated_at?: string
+  deleted_at?: string | null
 
   constructor(attributes: CourseAttributes) {
     this.id = attributes.id

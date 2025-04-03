@@ -33,14 +33,14 @@ const STUDENT_SUNDIAL_THEME: ThemeTypes = {
     "app-bar-color": "#ff0066",
   },
   colors: {
-    background: "#EDF8FE",
+    background: "#ebf0f5",
     surface: "#FFFFFF",
-    primary: "#1274A9", // PRIMARY GREEN
-    secondary: "#7287A4",
-    success: "#96C951", // PRIMARY GREEN
-    warning: "#EFB71D", // ALT COLOUR 3
-    error: "#BE2642", // ACCENT COLOUR 2
-    info: "#67C8CC", // ALT COLOUR 1
+    primary: "#0E5A8A", // PRIMARY Blue
+    secondary: "#5A7CA3",
+    success: "#4CAF50", // PRIMARY GREEN
+    warning: "#FBC02D", // ALT COLOUR 3
+    error: "#D32F2F", // ACCENT COLOUR 2
+    info: "#3DB8D1", // ALT COLOUR 1
     "on-background": "#222222",
     "on-surface": "#222222",
     "on-primary": "#ffffff",
@@ -50,8 +50,8 @@ const STUDENT_SUNDIAL_THEME: ThemeTypes = {
     "on-error": "#ffffff",
     "on-info": "#222222",
 
-    "header-bar-color": "#1274A9",
-    "breadcrumb-bar-color": "#D5E9BA",
+    "header-bar-color": "#0D3A61",
+    "breadcrumb-bar-color": "#b9d7ed",
   },
 }
 export { STUDENT_SUNDIAL_THEME }

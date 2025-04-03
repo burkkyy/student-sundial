@@ -34,11 +34,11 @@ const props = defineProps<{
 }>()
 
 function getColor() {
-  const color = props.color || "#F0F4EA"
+  const color = props.color || "#FFFFFF"
   const themeColor = current.value.colors[color]
 
   if (!isNil(themeColor)) {
-    if (color === "success") return `#D5E9BA`
+    if (color === "success") return `#53a4cf`
     if (color === "error") return `#E7DFE7`
 
     return `${themeColor}55`

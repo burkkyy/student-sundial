@@ -21,6 +21,7 @@ import {
   SectionBlocksController,
   SectionsController,
   TeachingsController,
+  TimetableUploadController,
   UsersController,
 } from "@/controllers"
 
@@ -47,6 +48,9 @@ router
   .get(UsersController.show)
   .patch(UsersController.update)
   .delete(UsersController.destroy)
+
+// Time Table file upload
+router.route("/api/timetable/upload").post(TimetableUploadController.create)
 
 // Google Calendar
 router

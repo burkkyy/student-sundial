@@ -2,20 +2,17 @@ import { isEmpty, isNil, isUndefined } from "lodash"
 
 import logger from "@/utils/logger"
 import db from "@/db/db-client"
-import { DateTime } from "luxon"
 
 export interface BlockAttributes {
   id: number
-  start_time: DateTime
-  end_time: DateTime
-  start_date: Date
-  end_date: Date
+  start_at: string
+  end_at: string
   location: string
   recurrence: string
   is_cancelled: boolean
-  created_at?: Date
-  updated_at?: Date
-  deleted_at?: Date | null
+  created_at?: string
+  updated_at?: string
+  deleted_at?: string | null
 }
 
 export type BlockWhereOptions = {
@@ -28,23 +25,19 @@ export type BlockQueryOptions = {
 
 export class Block {
   id: number
-  start_time: DateTime
-  end_time: DateTime
-  start_date: Date
-  end_date: Date
+  start_at: string
+  end_at: string
   location: string
   recurrence: string
   is_cancelled: boolean
-  created_at?: Date
-  updated_at?: Date
-  deleted_at?: Date | null
+  created_at?: string
+  updated_at?: string
+  deleted_at?: string | null
 
   constructor(attributes: BlockAttributes) {
     this.id = attributes.id
-    this.start_time = attributes.start_time
-    this.end_time = attributes.end_time
-    this.start_date = attributes.start_date
-    this.end_date = attributes.end_date
+    this.start_at = attributes.start_at
+    this.end_at = attributes.end_at
     this.location = attributes.location
     this.recurrence = attributes.recurrence
     this.is_cancelled = attributes.is_cancelled
@@ -96,7 +89,7 @@ export class Block {
   }
 
   static async create(attributes: Partial<BlockAttributes>): Promise<Block> {
-    logger.info("USER CREATE ", attributes)
+    logger.info("BLOCK CREATE ", attributes)
 
     const [createdId] = await db("blocks").insert(attributes)
 
@@ -111,7 +104,7 @@ export class Block {
   }
 
   async update(attributes: Partial<BlockAttributes>): Promise<void> {
-    logger.info("USER UPDATE", attributes)
+    logger.info("BLOCK UPDATE", attributes)
     const row = await db("blocks").where({ id: this.id }).update(attributes)
 
     if (isNil(row)) {
