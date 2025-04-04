@@ -124,7 +124,6 @@ TODO
 3. In `app/`, create a `.env.production` and populate with the following content:
 
    ```bash
-   NODE_ENV=production
    VITE_APPLICATION_NAME="Student Sundial"
    HOST_PORT=8080
    API_PORT=8080
@@ -142,7 +141,7 @@ TODO
    PDF_PARSER_JS=/usr/src/api/src/lib/pdf-parser/pdf-parser.mjs
    ```
 
-4. (ignore if set in .env) Set env to production via `export NODE_ENV=production`
+4. Set env to production via `export NODE_ENV=production`
 
 5. Run app via `./app/bin/boot-app.sh`
 
