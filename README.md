@@ -35,6 +35,9 @@
    VITE_AUTH0_DOMAIN=https://dev-rzjcjlzhy63wjf31.us.auth0.com
    VITE_AUTH0_AUDIENCE=testing
    VITE_AUTH0_CLIENT_ID=TmJtOIRuRHC841MqXZZDJ2vBQJ8AgdCl
+   AUTH0_MANAGEMENT_AUDIENCE=https://dev-rzjcjlzhy63wjf31.us.auth0.com/api/v2/
+   AUTH0_MANAGEMENT_CLIENT_ID=rIYPfuOibecj7OaHAmHOhWXleqnYy2WJ
+   AUTH0_MANAGEMENT_CLIENT_SECRET=<ASK-DEVELOPER-FOR-THIS>
    MYSQL_HOST=localhost
    MYSQL_USERNAME=root
    MYSQL_PASSWORD=DevPwd99!
@@ -138,7 +141,10 @@ TODO
    VITE_AUTH0_DOMAIN=https://dev-rzjcjlzhy63wjf31.us.auth0.com
    VITE_AUTH0_AUDIENCE=testing
    VITE_AUTH0_CLIENT_ID=TmJtOIRuRHC841MqXZZDJ2vBQJ8AgdCl
-   PDF_PARSER_JS=/usr/src/api/src/lib/pdf-parser/pdf-parser.mjs
+   AUTH0_MANAGEMENT_AUDIENCE=https://dev-rzjcjlzhy63wjf31.us.auth0.com/api/v2/
+   AUTH0_MANAGEMENT_CLIENT_ID=rIYPfuOibecj7OaHAmHOhWXleqnYy2WJ
+   AUTH0_MANAGEMENT_CLIENT_SECRET=<ASK-DEVELOPER-FOR-THIS>
+   PDF_PARSER_JS=./dist/lib/pdf-parser/pdf-parser.mjs
    ```
 
 4. Set env to production via `export NODE_ENV=production`
@@ -166,6 +172,10 @@ TODO
    VITE_AUTH0_DOMAIN=https://dev-rzjcjlzhy63wjf31.us.auth0.com
    VITE_AUTH0_AUDIENCE=testing
    VITE_AUTH0_CLIENT_ID=TmJtOIRuRHC841MqXZZDJ2vBQJ8AgdCl
+   AUTH0_MANAGEMENT_AUDIENCE=https://dev-rzjcjlzhy63wjf31.us.auth0.com/api/v2/
+   AUTH0_MANAGEMENT_CLIENT_ID=rIYPfuOibecj7OaHAmHOhWXleqnYy2WJ
+   AUTH0_MANAGEMENT_CLIENT_SECRET=<ASK-DEVELOPER-FOR-THIS>
+   PDF_PARSER_JS=./dist/lib/pdf-parser/pdf-parser.mjs
    ```
 
 3. If your MYSQL credentials are still for the dev db, (ie testing production locally) then you have to start up the db locally via:

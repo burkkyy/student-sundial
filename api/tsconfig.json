@@ -27,7 +27,9 @@
     "emitDecoratorMetadata": true,
     "incremental": true,
     "isolatedModules": false,
-    "useDefineForClassFields": true
+    "useDefineForClassFields": true,
+    "allowJs": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "files": ["src/lib/pdf-parser/pdf-parser.mjs"]
 }
