@@ -25,7 +25,6 @@
     "express": "^4.19.2",
     "express-form-data": "^2.0.23",
     "express-jwt": "^8.4.1",
-    "googleapis": "^148.0.0",
     "helmet": "^7.1.0",
     "jwks-rsa": "^3.1.0",
     "knex": "^3.1.0",
@@ -35,7 +34,6 @@
     "mysql": "^2.18.1",
     "node-schedule": "^2.1.1",
     "pdf2json": "^3.1.5",
-    "pdfreader": "^3.0.7",
     "uuid": "^11.0.2",
     "winston": "^3.13.0"
   },

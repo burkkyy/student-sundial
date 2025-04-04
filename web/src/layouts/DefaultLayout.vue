@@ -19,6 +19,8 @@
         </div>
 
         <v-spacer />
+        <GoogleCalenderSyncButton class="mr-5" />
+        <ImportTimetableButton class="mr-5" />
         <v-menu
           bottom
           offset-y
@@ -86,6 +88,8 @@ import { useAuth0 } from "@auth0/auth0-vue"
 import useCurrentUser from "@/use/use-current-user"
 
 import AppBreadcrumbs from "@/components/common/AppBreadcrumbs.vue"
+import ImportTimetableButton from "@/components/ImportTimetableButton.vue"
+import GoogleCalenderSyncButton from "@/components/GoogleCalenderSyncButton.vue"
 
 const { currentUser, isSystemAdmin } = useCurrentUser<true>()
 const { logout } = useAuth0()

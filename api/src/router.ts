@@ -21,6 +21,7 @@ import {
   SectionBlocksController,
   SectionsController,
   TeachingsController,
+  TimetableUploadController,
   UsersController,
 } from "@/controllers"
 
@@ -48,16 +49,14 @@ router
   .patch(UsersController.update)
   .delete(UsersController.destroy)
 
+// Time Table file upload
+router.route("/api/timetable/upload").post(TimetableUploadController.create)
+
 // Google Calendar
 router
   .route("/api/google-calendar")
   .get(GoogleCalendarController.index)
   .post(GoogleCalendarController.create)
-router
-  .route("/api/google-calendar/:id")
-  .get(GoogleCalendarController.show)
-  .patch(GoogleCalendarController.update)
-  .delete(GoogleCalendarController.destroy)
 
 // Blocks
 router.route("/api/blocks").get(BlocksController.index).post(BlocksController.create)

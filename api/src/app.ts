@@ -2,15 +2,19 @@ import express, { type Request, type Response } from "express"
 import cors from "cors"
 import path from "path"
 import helmet from "helmet"
+import formData from "express-form-data"
 
 import { AUTH0_DOMAIN, FRONTEND_URL } from "@/config"
 import router from "@/router"
-import enhancedQsDecoder from "@/utils/enhanced-qs-decoder";
+import enhancedQsDecoder from "@/utils/enhanced-qs-decoder"
 
 export const app = express()
 app.set("query parser", enhancedQsDecoder)
 app.use(express.json()) // for parsing application/json
+app.use(formData.parse({ autoClean: true }))
+app.use(formData.union())
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
 app.use(
   helmet.contentSecurityPolicy({
     directives: {

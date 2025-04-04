@@ -3,6 +3,7 @@ import db from "@/db/db-client"
 // Import Models
 import Block from "@/models/block"
 import Course from "@/models/course"
+import CourseBlock from "@/models/course-blocks"
 import CourseTask from "@/models/course-task"
 import Enrollment from "@/models/enrollment"
 import Section from "@/models/section"
@@ -12,7 +13,18 @@ import User from "@/models/user"
 import UserRole from "@/models/user-role"
 
 // Export the models here so they can be imported
-export { User, UserRole, Course, Block, CourseTask, Enrollment, Section, SectionBlock, Teaching }
+export {
+  User,
+  UserRole,
+  Course,
+  Block,
+  CourseBlock,
+  CourseTask,
+  Enrollment,
+  Section,
+  SectionBlock,
+  Teaching,
+}
 
 // Special db instance will all models loaded
 export default db

@@ -1,7 +1,7 @@
 <template>
   <v-sheet
     color="breadcrumb-bar-color"
-    style="border-top: 1px #96c951 solid; border-bottom: 1px #96c951 solid"
+    style="border-top: 1px #0e5a8a solid; border-bottom: 1px #0e5a8a solid"
   >
     <v-container
       v-if="breadcrumbsWithExactTrueByDefault.length > 0 || !isNil(title)"

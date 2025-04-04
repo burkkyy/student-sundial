@@ -31,8 +31,6 @@ export class BaseController {
     }
   }
 
-  // Usage app.post("/api/users", UsersController.create)
-  // maps /api/users to UsersController#create()
   static get create() {
     return async (req: Request, res: Response, next: NextFunction) => {
       const controllerInstance = new this(req, res, next)
@@ -81,12 +79,6 @@ export class BaseController {
     throw new Error("Not Implemented")
   }
 
-  // Internal helpers
-
-  // This should have been loaded in the authorization middleware
-  // Currently assuming that authorization happens before this controller gets called.
-  // Child controllers that are on an non-authorizable route should override this method
-  // and return undefined
   get currentUser(): User {
     return this.request.currentUser
   }
@@ -98,47 +90,6 @@ export class BaseController {
   get query() {
     return this.request.query
   }
-
-  get pagination() {
-    const page = parseInt(this.query.page?.toString() || "") || 1
-    const perPage = parseInt(this.query.perPage?.toString() || "") || 10
-    const limit = Math.max(10, Math.min(perPage, 1000)) // restrict max limit to 1000 for safety
-    const offset = (page - 1) * limit
-    return {
-      page,
-      perPage,
-      limit,
-      offset,
-    }
-  }
-
-  // buildWhere<TModelOverride extends Model = TModel>(
-  //   overridableOptions: WhereOptions<Attributes<TModelOverride>> = {},
-  //   nonOverridableOptions: WhereOptions<Attributes<TModelOverride>> = {}
-  // ): WhereOptions<Attributes<TModelOverride>> {
-  //   // TODO: consider if we should add parsing of Sequelize [Op.is] and [Op.not] here
-  //   // or in the api/src/utils/enhanced-qs-decoder.ts function
-  //   const queryWhere = this.query.where as WhereOptions<Attributes<TModelOverride>>
-  //   return {
-  //     ...overridableOptions,
-  //     ...queryWhere,
-  //     ...nonOverridableOptions,
-  //   } as WhereOptions<Attributes<TModelOverride>>
-  // }
-
-  // buildFilterScopes<FilterOptions extends Record<string, unknown>>(
-  //   initialScopes: BaseScopeOptions[] = []
-  // ): BaseScopeOptions[] {
-  //   const filters = this.query.filters as FilterOptions
-  //   const scopes = initialScopes
-  //   if (!isEmpty(filters)) {
-  //     Object.entries(filters).forEach(([key, value]) => {
-  //       scopes.push({ method: [key, value] })
-  //     })
-  //   }
-
-  //   return scopes
-  // }
 }
 
 export default BaseController
