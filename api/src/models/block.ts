@@ -7,6 +7,7 @@ export interface BlockAttributes {
   id: number
   start_at: string
   end_at: string
+  days: string
   location: string
   recurrence: string
   is_cancelled: boolean
@@ -27,6 +28,7 @@ export class Block {
   id: number
   start_at: string
   end_at: string
+  days: string
   location: string
   recurrence: string
   is_cancelled: boolean
@@ -38,6 +40,7 @@ export class Block {
     this.id = attributes.id
     this.start_at = attributes.start_at
     this.end_at = attributes.end_at
+    this.days = attributes.days
     this.location = attributes.location
     this.recurrence = attributes.recurrence
     this.is_cancelled = attributes.is_cancelled

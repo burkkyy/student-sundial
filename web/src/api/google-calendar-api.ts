@@ -4,6 +4,10 @@ import http from "@/api/http-client"
 export type GoogleCalendarQueryOptions = {}
 
 export const googleCalendarApi = {
+  async uploadTimeTable(): Promise<void> {
+    const { data } = await http.post("/api/google-calendar")
+    return data
+  },
   async listEvents(params: GoogleCalendarQueryOptions = {}): Promise<{
     events: string[]
     totalCount: number

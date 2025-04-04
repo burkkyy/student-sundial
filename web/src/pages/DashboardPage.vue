@@ -27,8 +27,8 @@
                 <v-card class="h-100">
                   <v-card-title>{{ course.name }}</v-card-title>
                   <v-card-text>
-                    <p class="text-subtitle-2">Start: {{ course.startDate }}</p>
-                    <p class="text-subtitle-2">End: {{ course.endDate }}</p>
+                    <p class="text-subtitle-2">Start: {{ course.start_on }}</p>
+                    <p class="text-subtitle-2">End: {{ course.end_on }}</p>
                     <p class="text-body-2">{{ course.description }}</p>
                   </v-card-text>
                   <v-card-actions>
@@ -343,6 +343,7 @@ import { useAuth0 } from "@auth0/auth0-vue"
 
 import useBreadcrumbs from "@/use/use-breadcrumbs"
 import useCurrentUser from "@/use/use-current-user"
+import useCourses from "@/use/use-courses"
 
 import googleCalendarApi from "@/api/google-calendar-api"
 
@@ -360,25 +361,28 @@ const tabs = ref([
   { value: 1, title: "Course Events", icon: "mdi-calendar" },
 ])
 
+
+const { courses } = useCourses()
+
 // placeholder data - replace w/ actual data from backend
-const courses = ref([
-  {
-    id: 1,
-    name: "CSCI 101",
-    instructor: "dr. dick",
-    description: "Basic concepts of programming and algorithms",
-    startDate: "2025-01-01",
-    endDate: "2025-04-15",
-  },
-  {
-    id: 2,
-    name: "CSCI 201",
-    instructor: "prof. johnson",
-    description: "Advanced data structures and algorithms",
-    startDate: "2025-01-01",
-    endDate: "2025-04-15",
-  },
-])
+// const courses = ref([
+//   {
+//     id: 1,
+//     name: "CSCI 101",
+//     instructor: "dr. dick",
+//     description: "Basic concepts of programming and algorithms",
+//     startDate: "2025-01-01",
+//     endDate: "2025-04-15",
+//   },
+//   {
+//     id: 2,
+//     name: "CSCI 201",
+//     instructor: "prof. johnson",
+//     description: "Advanced data structures and algorithms",
+//     startDate: "2025-01-01",
+//     endDate: "2025-04-15",
+//   },
+// ])
 
 const upcomingEvents = ref([
   {

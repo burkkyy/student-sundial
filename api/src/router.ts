@@ -57,11 +57,6 @@ router
   .route("/api/google-calendar")
   .get(GoogleCalendarController.index)
   .post(GoogleCalendarController.create)
-router
-  .route("/api/google-calendar/:id")
-  .get(GoogleCalendarController.show)
-  .patch(GoogleCalendarController.update)
-  .delete(GoogleCalendarController.destroy)
 
 // Blocks
 router.route("/api/blocks").get(BlocksController.index).post(BlocksController.create)

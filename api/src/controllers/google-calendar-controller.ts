@@ -6,6 +6,9 @@ import {
 } from "@/integrations/google-calendar-integration"
 import logger from "@/utils/logger"
 
+import { Course } from "@/models"
+import { isNil } from "lodash"
+
 export class GoogleCalendarController extends BaseController {
   async index() {
     try {
@@ -32,20 +35,37 @@ export class GoogleCalendarController extends BaseController {
     }
   }
 
-  async show() {
-    throw new Error("Not implemented")
-  }
-
   async create() {
-    throw new Error("Not implemented")
-  }
+    console.log("UPLOAD TIMETABLE TO GOOGLE CALENDAR")
 
-  async update() {
-    throw new Error("Not implemented")
-  }
+    const courses = await Course.findAll()
 
-  async destroy() {
-    throw new Error("Not implemented")
+    for (const course of courses) {
+      await course.fetchBlocks()
+
+      console.log("COURSE BLOCKS: ", course.blocks)
+      if (isNil(course.blocks)) {
+        continue
+      }
+
+      for (const block of course.blocks) {
+        console.log("CREATNG EVENT")
+
+        console.log(block)
+
+        // const event: GoogleCalendarEvent = {
+        //   summary: "Student Sundial Test Event",
+        //   start: {
+        //     dateTime: block.start_at,
+        //   },
+        //   end: {
+        //     dateTime: block.end_at,
+        //   },
+        // }
+
+        // await googleCalendarIntegration.createEvent(this.currentUser.auth_subject, event)
+      }
+    }
   }
 }
 

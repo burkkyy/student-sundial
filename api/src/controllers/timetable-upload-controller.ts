@@ -5,7 +5,7 @@ import { convertDateTime } from "@/utils/convert-time-formats"
 
 import BaseController from "@/controllers/base-controller"
 import { getTimetableFromPdf } from "@/lib/pdf-parser"
-import { Course, Block } from "@/models"
+import { Course, Block, CourseBlock } from "@/models"
 
 export class TimetableUploadController extends BaseController {
   async create() {
@@ -19,8 +19,10 @@ export class TimetableUploadController extends BaseController {
       const pdf = readFileSync(formData.path)
       const timetable = await getTimetableFromPdf(pdf)
 
+      let currentCourse = undefined
+
       for (const course of timetable.courses) {
-        await Course.create({
+        currentCourse = await Course.create({
           name: course.name,
           description: "",
         })
@@ -29,12 +31,22 @@ export class TimetableUploadController extends BaseController {
           const start_at = convertDateTime(block.startDate, block.startTime)
           const end_at = convertDateTime(block.endDate, block.endTime)
 
-          await Block.create({
+          const newBlock = await Block.create({
             start_at,
             end_at,
+            days: block.days,
             location: block.location,
             recurrence: "",
             is_cancelled: false,
+          })
+
+          currentCourse.start_on = start_at
+          currentCourse.end_on = end_at
+          currentCourse.sync()
+
+          await CourseBlock.create({
+            course_id: currentCourse.id,
+            block_id: newBlock.id,
           })
         }
       }
