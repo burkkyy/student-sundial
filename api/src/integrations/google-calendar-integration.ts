@@ -1,5 +1,5 @@
 import { isEmpty, isUndefined } from "lodash"
-import { google } from "googleapis"
+import axios from "axios"
 
 import logger from "@/utils/logger"
 import { auth0Integration } from "@/integrations/auth0-integration"
@@ -16,6 +16,7 @@ export interface GoogleCalendarEvent {
     dateTime: string
     timeZone?: string
   }
+  recurrence?: string[]
 }
 
 export class GoogleApiError extends Error {
@@ -35,14 +36,11 @@ export const googleCalendarIntegration = {
         throw new Error("No Google access token available for this user")
       }
 
-      const auth = new google.auth.OAuth2()
-      auth.setCredentials({ access_token: googleAccessToken })
+      const calendarApiUrl = "https://www.googleapis.com/calendar/v3/calendars/primary/events"
 
-      const calendar = google.calendar("v3")
-      const response = await calendar.events.insert({
-        auth: auth,
-        calendarId: "primary",
-        requestBody: {
+      const response = await axios.post(
+        calendarApiUrl,
+        {
           summary: event.summary,
           description: event.description,
           location: event.location,
@@ -55,8 +53,15 @@ export const googleCalendarIntegration = {
             dateTime: event.end.dateTime,
             timeZone: event.end.timeZone,
           },
+          recurrence: event.recurrence,
         },
-      })
+        {
+          headers: {
+            Authorization: `Bearer ${googleAccessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
 
       //logger.info("Event created: ", response.data.htmlLink)
       return response.data
