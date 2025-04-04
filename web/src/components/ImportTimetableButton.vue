@@ -41,6 +41,8 @@ async function handleFile(event: Event) {
 
       await timetableApi.upload(file)
       snack.success("Uploaded timetable")
+
+      location.reload()
     }
   } catch (error) {
     snack.error(`Failed to create timetable: ${error}`)

@@ -4,7 +4,14 @@
       cols="12"
       md="9"
     >
-      <TabCard :tabs="tabs">
+      <v-skeleton-loader
+        v-if="isLoading"
+        type="card"
+      />
+      <TabCard
+        v-else
+        :tabs="tabs"
+      >
         <v-tabs-window-item :value="0">
           <div class="pa-4">
             <div class="d-flex justify-space-between align-center mb-4">
@@ -327,32 +334,17 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-
-  <v-btn
-    text="Press Me"
-    @click="foo"
-  />
 </template>
 
 <script setup lang="ts">
+import { isNil } from "lodash"
 import { ref, computed } from "vue"
 import SimpleCard from "@/components/common/SimpleCard.vue"
 import TabCard from "@/components/common/TabCard.vue"
-
-import { useAuth0 } from "@auth0/auth0-vue"
+import { VForm } from "vuetify/lib/components/index.mjs"
 
 import useBreadcrumbs from "@/use/use-breadcrumbs"
-import useCurrentUser from "@/use/use-current-user"
-import useCourses from "@/use/use-courses"
-
-import googleCalendarApi from "@/api/google-calendar-api"
-
-const { currentUser } = useCurrentUser()
-const { user } = useAuth0()
-
-async function foo() {
-  await googleCalendarApi.listEvents()
-}
+import useCourses, { type Course } from "@/use/use-courses"
 
 useBreadcrumbs("Dashboard [PROF]", [])
 
@@ -361,28 +353,7 @@ const tabs = ref([
   { value: 1, title: "Course Events", icon: "mdi-calendar" },
 ])
 
-
-const { courses } = useCourses()
-
-// placeholder data - replace w/ actual data from backend
-// const courses = ref([
-//   {
-//     id: 1,
-//     name: "CSCI 101",
-//     instructor: "dr. dick",
-//     description: "Basic concepts of programming and algorithms",
-//     startDate: "2025-01-01",
-//     endDate: "2025-04-15",
-//   },
-//   {
-//     id: 2,
-//     name: "CSCI 201",
-//     instructor: "prof. johnson",
-//     description: "Advanced data structures and algorithms",
-//     startDate: "2025-01-01",
-//     endDate: "2025-04-15",
-//   },
-// ])
+const { courses, isLoading } = useCourses()
 
 const upcomingEvents = ref([
   {
@@ -417,8 +388,6 @@ const upcomingEvents = ref([
 // dialog controls
 const newCourseDialog = ref(false)
 const newEventDialog = ref(false)
-const courseForm = ref(null)
-const eventForm = ref(null)
 
 const newCourse = ref({
   name: "",
@@ -441,14 +410,6 @@ const selectedCourse = ref<Course | null>(null)
 
 // refs for hiding passed events
 const hidePassedEvents = ref(false)
-
-// 'computed' property for sorted course events
-const courseEvents = computed(() => {
-  if (!selectedCourse.value) return []
-  return upcomingEvents.value
-    .filter((event) => event.courseId === selectedCourse.value?.id)
-    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
-})
 
 // computed property to handle filtering. 'passed events'
 const filteredCourseEvents = computed(() => {
@@ -498,15 +459,6 @@ const openNewEventDialog = () => {
   newEventDialog.value = true
 }
 
-interface Course {
-  id: number
-  name: string
-  instructor: string
-  description: string
-  startDate: string
-  endDate: string
-}
-
 interface Event {
   id: number
   title: string
@@ -542,48 +494,32 @@ const deleteEvent = async (event: Event) => {
   }
 }
 
+const courseForm = ref<InstanceType<typeof VForm> | null>(null)
+
 const saveNewCourse = async () => {
-  const form = courseForm.value as any
-  const { valid } = await form.validate()
+  if (isNil(courseForm.value)) return
+
+  const { valid } = await courseForm.value.validate()
 
   if (!valid) {
     return
   }
 
-  // create new course with a unique ID
-  const newId = Math.max(...courses.value.map((c) => c.id), 0) + 1
-  const newCourseData = {
-    id: newId,
-    name: newCourse.value.name,
-    description: newCourse.value.description,
-    startDate: newCourse.value.startDate,
-    endDate: newCourse.value.endDate,
-    instructor: "Current User", // placeholder for actual user data
-  }
-
-  // adds the new course to the courses array
-  courses.value.push(newCourseData)
-
-  // reset form and close dialog
-  newCourse.value = {
-    name: "",
-    description: "",
-    startDate: "",
-    endDate: "",
-  }
   newCourseDialog.value = false
 }
 
+const eventForm = ref<InstanceType<typeof VForm> | null>(null)
+
 // saves a new event or update an existing one
 const saveNewEvent = async () => {
-  const form = eventForm.value as any
-  const { valid } = await form.validate()
+  if (isNil(eventForm.value)) return
+
+  const { valid } = await eventForm.value.validate()
 
   if (!valid) {
     return
   }
 
-  const eventDate = new Date(newEvent.value.dueDate)
   const isPassed = isEventPassed(newEvent.value.dueDate)
   const eventColor = isPassed ? "green" : "primary"
   const eventIcon = isPassed ? "mdi-check-bold" : "mdi-clock-time-nine"
